@@ -35,7 +35,7 @@ final class CommentMainFactory extends PersistentProxyObjectFactory{
     protected function defaults(): array|callable
     {
         return [
-            'author' => UserFactory::new(),
+            'user' => UserFactory::new(),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'text' => self::faker()->sentence(mt_rand(10, 50)),
             'trick' => TrickFactory::new(),

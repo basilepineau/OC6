@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
         // Créer 10 tricks en utilisant les utilisateurs créés
         $tricks = TrickFactory::createMany(10, function() use ($users) {
             return [
-                'author' => $users[array_rand($users)], // Associer aléatoirement un utilisateur existant à chaque trick
+                'user' => $users[array_rand($users)], // Associer aléatoirement un utilisateur existant à chaque trick
             ];
         });
 

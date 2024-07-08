@@ -6,15 +6,34 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-class User
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $email = null;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = ['ROLE_USER'];
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
+    private ?string $password = null;
 
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
@@ -23,51 +42,115 @@ class User
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 500)]
-    private ?string $avatar = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
+    private ?string $avatar = 'avatar.png';
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
-    private ?bool $emailConfirmed = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $token = null;
-
     /**
-     * @var Collection<int, Trick>
+     * @var Collection<int, CommentResponse>
      */
-    #[ORM\OneToMany(targetEntity: Trick::class, mappedBy: 'author', orphanRemoval: true)]
-    private Collection $tricks;
+    #[ORM\OneToMany(targetEntity: CommentResponse::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $commentResponses;
 
     /**
      * @var Collection<int, CommentMain>
      */
-    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'author', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commentMains;
 
     /**
-     * @var Collection<int, CommentResponse>
+     * @var Collection<int, Trick>
      */
-    #[ORM\OneToMany(targetEntity: CommentResponse::class, mappedBy: 'author', orphanRemoval: true)]
-    private Collection $CommentResponses;
+    #[ORM\OneToMany(targetEntity: Trick::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $tricks;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
     public function __construct()
     {
-        $this->tricks = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->commentResponses = new ArrayCollection();
         $this->commentMains = new ArrayCollection();
-        $this->CommentResponses = new ArrayCollection();
+        $this->tricks = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     * @return list<string>
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getFirstName(): ?string
@@ -94,18 +177,6 @@ class User
         return $this;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     public function getAvatar(): ?string
     {
         return $this->avatar;
@@ -114,18 +185,6 @@ class User
     public function setAvatar(string $avatar): static
     {
         $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
 
         return $this;
     }
@@ -142,54 +201,30 @@ class User
         return $this;
     }
 
-    public function isEmailConfirmed(): ?bool
-    {
-        return $this->emailConfirmed;
-    }
-
-    public function setEmailConfirmed(bool $emailConfirmed): static
-    {
-        $this->emailConfirmed = $emailConfirmed;
-
-        return $this;
-    }
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    public function setToken(string $token): static
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
     /**
-     * @return Collection<int, Trick>
+     * @return Collection<int, CommentResponse>
      */
-    public function getTricks(): Collection
+    public function getCommentResponses(): Collection
     {
-        return $this->tricks;
+        return $this->commentResponses;
     }
 
-    public function addTrick(Trick $trick): static
+    public function addCommentResponse(CommentResponse $commentResponse): static
     {
-        if (!$this->tricks->contains($trick)) {
-            $this->tricks->add($trick);
-            $trick->setAuthor($this);
+        if (!$this->commentResponses->contains($commentResponse)) {
+            $this->commentResponses->add($commentResponse);
+            $commentResponse->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeTrick(Trick $trick): static
+    public function removeCommentResponse(CommentResponse $commentResponse): static
     {
-        if ($this->tricks->removeElement($trick)) {
+        if ($this->commentResponses->removeElement($commentResponse)) {
             // set the owning side to null (unless already changed)
-            if ($trick->getAuthor() === $this) {
-                $trick->setAuthor(null);
+            if ($commentResponse->getUser() === $this) {
+                $commentResponse->setUser(null);
             }
         }
 
@@ -208,7 +243,7 @@ class User
     {
         if (!$this->commentMains->contains($commentMain)) {
             $this->commentMains->add($commentMain);
-            $commentMain->setAuthor($this);
+            $commentMain->setUser($this);
         }
 
         return $this;
@@ -218,8 +253,8 @@ class User
     {
         if ($this->commentMains->removeElement($commentMain)) {
             // set the owning side to null (unless already changed)
-            if ($commentMain->getAuthor() === $this) {
-                $commentMain->setAuthor(null);
+            if ($commentMain->getUser() === $this) {
+                $commentMain->setUser(null);
             }
         }
 
@@ -227,31 +262,55 @@ class User
     }
 
     /**
-     * @return Collection<int, CommentResponse>
+     * @return Collection<int, Trick>
      */
-    public function getCommentResponses(): Collection
+    public function getTricks(): Collection
     {
-        return $this->CommentResponses;
+        return $this->tricks;
     }
 
-    public function addCommentResponse(CommentResponse $commentResponse): static
+    public function addTrick(Trick $trick): static
     {
-        if (!$this->CommentResponses->contains($commentResponse)) {
-            $this->CommentResponses->add($commentResponse);
-            $commentResponse->setAuthor($this);
+        if (!$this->tricks->contains($trick)) {
+            $this->tricks->add($trick);
+            $trick->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeCommentResponse(CommentResponse $commentResponse): static
+    public function removeTrick(Trick $trick): static
     {
-        if ($this->CommentResponses->removeElement($commentResponse)) {
+        if ($this->tricks->removeElement($trick)) {
             // set the owning side to null (unless already changed)
-            if ($commentResponse->getAuthor() === $this) {
-                $commentResponse->setAuthor(null);
+            if ($trick->getUser() === $this) {
+                $trick->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetTokenExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->resetTokenExpiresAt;
+    }
+
+    public function setResetTokenExpiresAt(?\DateTimeImmutable $resetTokenExpiresAt): static
+    {
+        $this->resetTokenExpiresAt = $resetTokenExpiresAt;
 
         return $this;
     }

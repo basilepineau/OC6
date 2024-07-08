@@ -43,15 +43,15 @@ class Trick
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'trick', orphanRemoval: true)]
     private Collection $videos;
 
-    #[ORM\ManyToOne(inversedBy: 'tricks')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
-
     /**
      * @var Collection<int, CommentMain>
      */
     #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'trick', orphanRemoval: true)]
     private Collection $commentMains;
+
+    #[ORM\ManyToOne(inversedBy: 'tricks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -185,18 +185,6 @@ class Trick
         return $this;
     }
 
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, CommentMain>
      */
@@ -223,6 +211,18 @@ class Trick
                 $commentMain->setTrick(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -35,12 +35,13 @@ final class UserFactory extends PersistentProxyObjectFactory{
     protected function defaults(): array|callable
     {
         return [
-            'avatar' => self::faker()->imageUrl(200, 200, 'people'),
-            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'email' => self::faker()->email(),
-            'emailConfirmed' => self::faker()->boolean(),
             'firstName' => self::faker()->firstName(),
             'lastName' => self::faker()->lastName(255),
+            'roles' => ['ROLE_USER'],
+            'avatar' => self::faker()->imageUrl(200, 200, 'people'),
+            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'emailConfirmed' => self::faker()->boolean(),
             'password' => self::faker()->sha256,
             'token' => self::faker()->sha256,
         ];

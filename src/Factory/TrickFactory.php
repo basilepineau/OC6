@@ -35,7 +35,7 @@ final class TrickFactory extends PersistentProxyObjectFactory{
     protected function defaults(): array|callable
     {
         return [
-            'author' => UserFactory::new(),
+            'user' => UserFactory::new(),
             'category' => CategoryFactory::new(),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'description' => self::faker()->sentence(mt_rand(100, 300)),

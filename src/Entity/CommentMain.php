@@ -16,13 +16,13 @@ class CommentMain extends Comment
     #[ORM\OneToMany(targetEntity: CommentResponse::class, mappedBy: 'commentMain', orphanRemoval: true)]
     private Collection $commentResponses;
 
-    #[ORM\ManyToOne(inversedBy: 'mainComments')]
+    #[ORM\ManyToOne(inversedBy: 'commentMains')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Trick $trick = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentMains')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -71,14 +71,14 @@ class CommentMain extends Comment
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function getUser(): ?User
     {
-        return $this->author;
+        return $this->user;
     }
 
-    public function setAuthor(?User $author): static
+    public function setUser(?User $user): static
     {
-        $this->author = $author;
+        $this->user = $user;
 
         return $this;
     }
