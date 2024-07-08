@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+    <div class="container w-50 py-5">
+        <h1 class="text-center">Register</h1>
+
+        {{ form_start(registrationForm) }}
+        {{ form_errors(registrationForm) }}
+        <div class="border border px-2 py-4 rounded mt-4 shadow w-75 m-auto">
+            <div class="w-75 m-auto d-flex flex-column gap-4 ">
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.firstName, 'First name') }}
+                    </div>
+                    {{ form_widget(registrationForm.firstName, {
+                        'attr': {
+                            'class': 'form-control',
+                            'autofocus': 'autofocus'
+                        }
+                    }) 
+                    }}
+                </div>
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.lastName, 'Last name') }}
+                    </div>
+                {{ form_widget(registrationForm.lastName, {
+                    'attr': {
+                        'class': 'form-control',
+                    }
+                }) 
+                }}
+                </div>
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.email, 'Email') }}
+                    </div>
+                {{ form_widget(registrationForm.email, {
+                    'attr': {
+                        'class': 'form-control',
+                    }
+                }) 
+                }}
+                </div>
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.plainPassword.first, 'Password') }}
+                    </div>
+                    {{ form_widget(registrationForm.plainPassword.first, {
+                        'attr': {
+                            'class': 'form-control',
+                            'autofocus': true
+                        }
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.plainPassword.second, 'Confirm Password') }}
+                    </div>
+                    {{ form_widget(registrationForm.plainPassword.second, {
+                        'attr': {
+                            'class': 'form-control',
+                        }
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Create my account</button>
+                </div>
+            {{ form_end(registrationForm) }}
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
