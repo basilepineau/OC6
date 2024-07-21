@@ -8,6 +8,12 @@
 
     <!-- Header-->
     <header class="bg-dark py-5">
+        {% for flash_message in app.flashes('success') %}
+            <div class="alert alert-success mb-4">{{ flash_message }}</div>
+        {% endfor %}
+        {% for flash_info in app.flashes('info') %}
+            <div class="alert alert-info rounded-0 text-center mb-4">{{ flash_info }}</div>
+        {% endfor %}
         <div class="container px-5 position-relative">
             <div class="row gx-5 align-items-center justify-content-center">
                 <div class="col-lg-8 col-xl-7 col-xxl-6">
@@ -44,10 +50,12 @@
                                 <img class="card-img-top img-fluid rounded-top" src="{{ asset('assets/uploads/' ~ trick.pictures.first.url) }}">
                                 <div class="card-body d-flex justify-content-between px-3">
                                     <h2 class="card-title h5"><a class="text-decoration-none text-dark" href="{{ path('app_trick_show', { 'id': trick.id }) }}">{{ trick.name }}</a></h2>
-                                    <div>
-                                        <i class="bi bi-lg bi-pencil mx-2"></i>
-                                        <i class="bi bi-lg bi-trash"></i>
-                                    </div>
+                                    {% if trick.user == user %}
+                                        <div>
+                                            <a href="{{ path('app_trick_edit', { 'id': trick.id }) }}"><i class="bi bi-lg bi-pencil mx-2"></i></a>
+                                            <a href="{{ path('app_trick_delete', { 'id': trick.id }) }}"><i class="bi bi-lg bi-trash"></i></a>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

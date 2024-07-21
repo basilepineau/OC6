@@ -3,78 +3,52 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-
     <div class="container w-50 py-5">
-        <h1 class="text-center">Register</h1>
+        <h1 class="text-center mb-4">Register</h1>
 
         {{ form_start(registrationForm) }}
-        {{ form_errors(registrationForm) }}
+
         <div class="border border px-2 py-4 rounded mt-4 shadow w-75 m-auto">
-            <div class="w-75 m-auto d-flex flex-column gap-4 ">
+            <div class="w-75 m-auto d-flex flex-column gap-4">
                 <div class="form-group">
                     <div class="mb-2">
-                        {{ form_label(registrationForm.firstName, 'First name') }}
+                        {{ form_label(registrationForm.username) }}
                     </div>
-                    {{ form_widget(registrationForm.firstName, {
-                        'attr': {
-                            'class': 'form-control',
-                            'autofocus': 'autofocus'
-                        }
-                    }) 
-                    }}
-                </div>
-                <div class="form-group">
-                    <div class="mb-2">
-                        {{ form_label(registrationForm.lastName, 'Last name') }}
-                    </div>
-                {{ form_widget(registrationForm.lastName, {
-                    'attr': {
-                        'class': 'form-control',
-                    }
-                }) 
-                }}
-                </div>
-                <div class="form-group">
-                    <div class="mb-2">
-                        {{ form_label(registrationForm.email, 'Email') }}
-                    </div>
-                {{ form_widget(registrationForm.email, {
-                    'attr': {
-                        'class': 'form-control',
-                    }
-                }) 
-                }}
-                </div>
-                <div class="form-group">
-                    <div class="mb-2">
-                        {{ form_label(registrationForm.plainPassword.first, 'Password') }}
-                    </div>
-                    {{ form_widget(registrationForm.plainPassword.first, {
+                    {{ form_widget(registrationForm.username, {
                         'attr': {
                             'class': 'form-control',
                             'autofocus': true
                         }
                     }) }}
-                    {{ form_errors(registrationForm.plainPassword.first) }}
+                    {{ form_errors(registrationForm.username) }}
                 </div>
                 <div class="form-group">
                     <div class="mb-2">
-                        {{ form_label(registrationForm.plainPassword.second, 'Confirm Password') }}
+                        {{ form_label(registrationForm.email) }}
                     </div>
-                    {{ form_widget(registrationForm.plainPassword.second, {
+                    {{ form_widget(registrationForm.email, {
                         'attr': {
                             'class': 'form-control',
                         }
                     }) }}
-                    {{ form_errors(registrationForm.plainPassword.second) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+                <div class="form-group">
+                    <div class="mb-2">
+                        {{ form_label(registrationForm.plainPassword, 'Password') }}
+                    </div>
+                    {{ form_widget(registrationForm.plainPassword, {
+                        'attr': {
+                            'class': 'form-control',
+                        }
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
                 </div>
                 <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Create my account</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
                 </div>
-            {{ form_end(registrationForm) }}
             </div>
         </div>
+        {{ form_end(registrationForm) }}
     </div>
-    
 {% endblock %}
-
