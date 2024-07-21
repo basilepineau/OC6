@@ -17,14 +17,16 @@ class HomeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/', name: 'app_homepage')]
     public function index(): Response
     {
         $repository = $this->entityManager->getRepository(Trick::class);
         $tricks = $repository->findAll();
+        $user = $this->getUser();
 
         return $this->render('home/index.html.twig', [
-            'tricks' => $tricks
+            'tricks' => $tricks,
+            'user' => $user
         ]);
     }
 }
