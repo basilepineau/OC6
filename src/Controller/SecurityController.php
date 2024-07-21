@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Form\ForgotPasswordType;
 use App\Form\ResetPasswordType;
 use App\Repository\UserRepository;
@@ -39,8 +38,8 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form->get('email')->getData();
-            $user = $userRepository->findOneBy(['email' => $email]);
+            $username = $form->get('username')->getData();
+            $user = $userRepository->findOneBy(['username' => $username]);
 
             if ($user) {
                 $resetPasswordService->sendResetPasswordEmail($user);
@@ -95,5 +94,4 @@ class SecurityController extends AbstractController
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
-    
 }
