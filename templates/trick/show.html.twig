@@ -13,8 +13,14 @@
         <div class="banner d-flex justify-content-center align-items-center position-relative">
             <img class="card-img-top img-fluid rounded w-100" src="{{ asset('assets/uploads/' ~ trick.pictures.first.url) }}">
             <div class="overlay-text display-1 position-absolute text-light">{{ trick.name }}</div>
+            {% if trick.user == user %}
+                <div class="position-absolute top-0 end-0 p-3">
+                    <a href="{{ path('app_trick_edit', { 'id': trick.id }) }}" class="text-white"><i class="bi bi-lg bi-pencil mx-2"></i></a>
+                    <a href="{{ path('app_trick_delete', { 'id': trick.id }) }}" class="text-white"><i class="bi bi-lg bi-trash"></i></a>
+                </div>
+            {% endif %}
         </div>
-        <div class="row gx-4 my-5">
+        <div class="row gap-3 p-4">
         {% for picture in trick.pictures %}
             <div class="col-md-2">
                 <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded">
@@ -22,40 +28,62 @@
         {% endfor %}
         {% for video in trick.videos %}
             <div class="col-md-2">
-                <div class="embed-responsive embed-responsive-16by9">
-                <iframe class="img-fluid" width="560" height="315" src="https://www.youtube.com/embed/8KotvBY28Mo?si=ZzWj7Az1B2Cs5lqu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>                </div>
+                <div class="d-flex justify-content-center align-items-center rounded" style="height:100px; overflow:hidden">
+                    <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="img-fluid" width="560" height="315" src="https://www.youtube.com/embed/8KotvBY28Mo?si=ZzWj7Az1B2Cs5lqu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>                </div>
+                </div>
             </div>
         {% endfor %}
         </div>
-        <div class="">
+        <div class="text-light my-5">
             {{ trick.description }}
         </div>
-        <div class="row w-75 mx-auto y-5 border-bottom border-dark py-5">
+        <div class="row w-75 mx-auto y-5 border-bottom border-light py-5">
             <div class="col-12 col-md-4">
-                <div class="border border-dark rounded p-2 text-center">{{ trick.createdAt|date('d/m/Y H:i') }}</div>
+                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                    <div class="text-light small">Created at</div>
+                    <div class="text-light">{{ trick.createdAt|date('d/m/Y H:i') }}</div>
+                </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="border border-dark rounded p-2 text-center">{{ trick.category.name }}</div>
+                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                    <div class="text-light small">Category</div>
+                    <div class="text-light">{{ trick.category.name }}</div>
+                </div>
             </div>
             <div class="col-12 col-md-4">
-                <div  class="border border-dark rounded mx-auto p-2 text-center">{{ trick.updatedAt|date('d/m/Y H:i') }}</div>
+                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                    <div class="text-light small">Edited at</div>
+                    <div class="text-light">{{ trick.updatedAt|date('d/m/Y H:i') }}</div>
+                </div>
             </div>
         </div>
-        <div class="w-75 mx-auto py-5 border-bottom border-dark text-center">
-            <h2>Add a comment</h2>
-            {{ form_start(form) }}
-                {{ form_widget(form.text) }}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            {{ form_end(form) }}
+        <div class="w-75 mx-auto py-5 border-bottom border-light text-center">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <h2 class="text-light">Add a comment</h2>
+                {{ form_start(form) }}
+                <div class="d-flex flex-column gap-3 w-75 m-auto">
+                    {{ form_widget(form.text) }}
+                    <button type="submit" class="btn btn-light w-50 m-auto">Submit</button>
+                </div>
+                {{ form_end(form) }}
+            {% else %}
+                <div class="text-light">
+                    <a class="text-light" href='/login'>Login</a> to post a comment.
+                </div>
+            {% endif %}
         </div>
         <div class="w-75 mx-auto my-5 d-flex flex-column gap-3">
-        {% for commentMain in trick.commentMains %}
+        {% for commentMain in commentMains %}
         <div class="row align-items-center">
             <div class="col-2 d-flex flex-column align-items-center gap-2">
-                <img class="rounded-circle" style="width:60px; height:auto"src="{{ asset('assets/avatar/' ~ commentMain.author.avatar) }}">
-                <div class="">{{ commentMain.author.username }}</div>
+                <img class="rounded-circle" style="width:60px; height:auto"src="{{ asset('assets/avatar/' ~ commentMain.user.avatar) }}">
+                <div class="text-light">{{ commentMain.user.username }}</div>
             </div>
-            <div class="col-10 border border-dark rounded p-3">{{ commentMain.text }}</div>
+            <div class="d-flex flex-column gap-3 col-10 border border-light rounded p-3">
+                <div class="text-light small">{{ commentMain.createdAt | date('F j, Y \a\t h:i A') }}</div>
+                <div class="text-light fs-5">{{ commentMain.text }}</div>
+            </div>
         </div>
         {% endfor %}
         </div>

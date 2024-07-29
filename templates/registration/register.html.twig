@@ -4,14 +4,14 @@
 
 {% block body %}
     <div class="container w-50 py-5">
-        <h1 class="text-center mb-4">Register</h1>
+        <h1 class="text-center text-light mb-4">Register</h1>
 
         {{ form_start(registrationForm) }}
 
         <div class="border border px-2 py-4 rounded mt-4 shadow w-75 m-auto">
-            <div class="w-75 m-auto d-flex flex-column gap-4">
+            <div class="w-50 m-auto d-flex flex-column gap-4">
                 <div class="form-group">
-                    <div class="mb-2">
+                    <div class="mb-2 text-light">
                         {{ form_label(registrationForm.username) }}
                     </div>
                     {{ form_widget(registrationForm.username, {
@@ -23,7 +23,7 @@
                     {{ form_errors(registrationForm.username) }}
                 </div>
                 <div class="form-group">
-                    <div class="mb-2">
+                    <div class="mb-2 text-light">
                         {{ form_label(registrationForm.email) }}
                     </div>
                     {{ form_widget(registrationForm.email, {
@@ -34,7 +34,7 @@
                     {{ form_errors(registrationForm.email) }}
                 </div>
                 <div class="form-group">
-                    <div class="mb-2">
+                    <div class="mb-2 text-light">
                         {{ form_label(registrationForm.plainPassword, 'Password') }}
                     </div>
                     {{ form_widget(registrationForm.plainPassword, {
@@ -45,7 +45,7 @@
                     {{ form_errors(registrationForm.plainPassword) }}
                 </div>
                 <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="btn btn-light w-25">Register</button>
                 </div>
             </div>
         </div>

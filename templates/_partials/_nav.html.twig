@@ -1,5 +1,5 @@
       <!-- Navigation-->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container px-5">
           <a class="navbar-brand" href="/">OC6</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,8 +16,8 @@
               {% if is_granted('IS_AUTHENTICATED_FULLY') %}
               <li class="nav-item">
                   <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle text-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      My account
+                    <button class="btn btn-primary dropdown-toggle text-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{ app.user.username }}
                     </button>
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="#">My profile</a></li>
@@ -30,7 +30,7 @@
                       <a class="nav-link {{ app.request.get('_route') == 'app_login' ? 'active' : 'text-secondary' }}" href="{{ path('app_login') }}">Sign in</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link {{ app.request.get('_route') == 'app_register' ? 'active' : 'text-secondary' }}"" href="{{ path('app_register') }}">Sign up</a>
+                      <a class="nav-link {{ app.request.get('_route') == 'app_register' ? 'active' : 'text-secondary' }}" href="{{ path('app_register') }}">Register</a>
                   </li>
               {% endif %}
             </ul>

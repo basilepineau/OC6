@@ -23,8 +23,7 @@ class TrickController extends AbstractController
     #[Route('/trick/{id}', name: 'app_trick_show')]
     public function show($id, Request $request): Response
     {
-        $repository = $this->entityManager->getRepository(Trick::class);
-        $trick = $repository->find($id);
+        $trick = $this->entityManager->getRepository(Trick::class)->find($id);
 
         if (!$trick) {
             throw $this->createNotFoundException('The trick does not exist.');
@@ -32,7 +31,6 @@ class TrickController extends AbstractController
 
         $commentMain = new CommentMain();
         $commentMain->setCreatedAt(new \DateTimeImmutable());
-        // $commentMain->setAuthor($user);
 
         $form = $this->createForm(CommentMainType::class, $commentMain);
 
@@ -47,6 +45,20 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_trick_show', ['id' => $id]);
         }
 
-        return $this->render('trick/show.html.twig', ['trick' => $trick, 'form' => $form->createView()]);
+        $commentMains = $this->entityManager->getRepository(CommentMain::class)->findByTrickOrderedByDate($id);
+        
+        $user = $this->getUser();
+
+        return $this->render('trick/show.html.twig', ['trick' => $trick, 'commentMains' => $commentMains, 'user' => $user, 'form' => $form->createView()]);
+    }
+
+    #[Route('/trick/{id}', name: 'app_trick_edit')]
+    public function edit($id, Request $request): Response
+    {
+    }
+
+    #[Route('/trick/{id}', name: 'app_trick_delete')]
+    public function delete($id, Request $request): Response
+    {
     }
 }
