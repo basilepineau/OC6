@@ -1,61 +1,10 @@
-.section {
-  background-color: rgb(83, 85, 129);
-}
-
-#tricks .container {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 5px;
-  border: 3px solid rgb(69, 71, 106);
-}
-
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  width: 100%;
-}
-
-.h2 {
-  font-size: 50px;
-  color: white;
-}
-
-.h3 {
-  font-size: 20px;
-  color: white;
-  margin-top: 10px;
-  margin-bottom: 50px;
-  font-weight: 300;
-}
-
-.card {
-  background-color: white;
-  flex: 1 1 calc(20% - 40px); /* 20% per card minus the gap */
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  cursor: pointer;
-  animation: fadeIn 0.3s ease-out;
-  transition: 0.1s;
-}
-
-.card:hover {
-  box-shadow: 10px 10px 0px 0px rgba(255, 255, 255, 0.3);
-}
-
 #load-more {
   margin-top: 50px;
   height: 50px;
   width: 10%;
   border-radius: 5px;
   border: none;
-  background-color: rgb(83, 85, 129);
+  background-color: rgba(103, 106, 157, 0.3);
   color: white;
   box-shadow: 4px 4px 0px 0px rgb(69, 71, 106);
   transition: 0.1s;
@@ -64,18 +13,4 @@
 #load-more:not([disabled]):hover {
   cursor: pointer;
   box-shadow: 9px 7px 0px 0px rgb(69, 71, 106);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.card {
-  border: none;
 }
