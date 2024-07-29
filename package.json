@@ -1,0 +1,25 @@
+{
+  "name": "oc6",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/basilepineau/OC6.git"
+  },
+  "author": "Basile PINEAU",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/basilepineau/OC6/issues"
+  },
+  "homepage": "https://github.com/basilepineau/OC6#readme",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  }
+}

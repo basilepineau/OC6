@@ -16,6 +16,19 @@ class CommentMainRepository extends ServiceEntityRepository
         parent::__construct($registry, CommentMain::class);
     }
 
+    /**
+     * @return CommentMain[] Returns an array of CommentMain objects
+     */
+    public function findByTrickOrderedByDate($trickId)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.trick = :trickId')
+            ->setParameter('trickId', $trickId)
+            ->orderBy('c.createdAt', 'DESC') // Pour le plus récent au plus vieux
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return CommentMain[] Returns an array of CommentMain objects
 //     */
