@@ -1,41 +1,36 @@
-/*!
- * Start Bootstrap - Modern Business v5.0.7 (https://startbootstrap.com/template-overviews/modern-business)
- * Copyright 2013-2023 Start Bootstrap
- * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-modern-business/blob/master/LICENSE)
- */
-// This file is intentionally blank
-// Use this file to add JavaScript to your project
-
 document.addEventListener("DOMContentLoaded", () => {
-  const cards = document.querySelectorAll(".card");
+  const cards = document.querySelectorAll("#card-container .col-md-3");
   const loadMoreButton = document.getElementById("load-more");
 
   let visibleCount = 0;
-  const startNumber = 5;
+  const initialVisible = 8; // Nombre de cartes visibles au début
+  const loadMoreCount = 4; // Nombre de cartes à afficher à chaque clic
 
   // Fonction pour afficher un nombre spécifique de cartes
   function showCards(count) {
     for (let i = visibleCount; i < count; i++) {
       if (cards[i]) {
         cards[i].classList.remove("d-none");
-        console.log(cards[i]);
       }
     }
     visibleCount = count;
   }
 
-  // Afficher les premières `startNumber` cartes
-  showCards(startNumber);
+  // Afficher les premières `initialVisible` cartes
+  showCards(initialVisible);
 
-  // Gérer le clic sur le bouton "Charger Plus"
+  // Gérer le clic sur le bouton "Load More"
   loadMoreButton.addEventListener("click", () => {
-    const newVisibleCount = Math.min(visibleCount + startNumber, cards.length);
+    const newVisibleCount = Math.min(
+      visibleCount + loadMoreCount,
+      cards.length
+    );
     showCards(newVisibleCount);
 
     if (newVisibleCount >= cards.length) {
       loadMoreButton.setAttribute("disabled", true);
-      loadMoreButton.classList.add("text-muted");
-      loadMoreButton.innerHTML = "All tricks are loaded.";
+      loadMoreButton.classList.add("btn-secondary");
+      loadMoreButton.textContent = "No more tricks to load";
     }
   });
 });
