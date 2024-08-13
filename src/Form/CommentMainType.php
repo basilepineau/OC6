@@ -21,7 +21,8 @@ class CommentMainType extends AbstractType
                 'required' => true, 
                 'attr' => [
                     'rows' => 2, 
-                    'placeholder' => 'Type your comment'
+                    'placeholder' => 'Type your comment',
+                    'class' => 'rounded p-2'
                 ]
             ])
 //             ->add('createdAt', null, [
