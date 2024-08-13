@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/trick-show/trick-show.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/trick-edit/trick-edit.css') }}"/>
+    <script src="{{ asset('assets/js/trick/trick-edit.js') }}"></script>
+{% endblock %}
+
+{% block title %}Edit trick {{ trick.name }}{% endblock %}
+
+
+{% block body %}
+<section class="container">
+    <div class="col-md-9 m-auto p-5">
+        {% for flash_message in app.flashes('success') %}
+            <div class="alert alert-success mb-4">{{ flash_message }}</div>
+        {% endfor %}
+        <div class="banner d-flex justify-content-center align-items-center position-relative">
+            <img class="card-img-top img-fluid rounded w-100" src="{{ asset('assets/uploads/' ~ trick.pictures.first.url) }}">
+            <div class="overlay-text display-1 position-absolute text-light">{{ trick.name }}</div>
+            <div class="position-absolute top-0 end-0 p-3 bg-primary rounded m-2">
+                <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}" class="text-white"><i class="bi bi-lg bi-pencil mx-2"></i></a>
+                <a href="{{ path('app_trick_delete', { 'slug': trick.slug }) }}" class="text-white"><i class="bi bi-lg bi-trash"></i></a>
+            </div>
+        </div>
+        <div class="row p-4">
+            {% for picture in trick.pictures %}
+                <div class="col-md-2 p-2">
+                    <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded" data-bs-toggle="modal" data-bs-target="#imageModal-{{ picture.id }}">
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="imageModal-{{ picture.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content bg-primary ">
+                            <div class="modal-body">
+                                <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded">
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% for video in trick.videos %}
+                <div class="col-md-2 p-2">
+                    <div class="video">
+                        <iframe class="rounded" width="100%" height="100%" src="https://www.youtube.com/embed/8KotvBY28Mo?si=ZzWj7Az1B2Cs5lqu" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="d-flex flex-column gap-4">
+            {{ form_start(form) }}
+                <div class="d-flex flex-column gap-4">
+                    <div class="form-group">
+                        {{ form_label(form.name, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.name, 
+                            {
+                                'attr':{
+                                    'class': 'form-control w-100 rounded p-2',
+                                }
+                            }) 
+                        }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.description, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.description, 
+                            {
+                                'attr': {
+                                    'class': 'w-100 rounded p-2'
+                                }
+                            }
+                        )}}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.category, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.category, 
+                            {
+                                'attr': {
+                                    'class': 'w-100 rounded p-2'
+                                }
+                            }
+                        )}}
+                        {{ form_errors(form.category) }}
+                    </div>
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="#" 
+                        class="btn btn-danger delete"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteConfirmationModal"
+                        data-url="{{ path('app_trick_delete', {slug: trick.slug}) }}" 
+                        data-token="{{ csrf_token('delete' ~ trick.slug) }}">
+                            Delete
+                        </a>
+                        <button type="submit" class="btn btn-primary-dark">Save</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="deleteConfirmatonModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete the trick ?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">Cancel</button>
+                        <form id="deleteForm" method="post" action="">
+                            <input type="hidden" name="_token" value="">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

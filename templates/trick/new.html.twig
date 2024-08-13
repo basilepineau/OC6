@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/trick-new/trick-new.css') }}"/>
+    <script src="{{ asset('assets/js/trick/trick-new.js') }}"></script>
+{% endblock %}
+
+{% block title %}New trick{% endblock %}
+
+
+{% block body %}
+
+<section>
+    <div class="col-md-9 m-auto p-5">
+        <h1 class="text-center text-light mb-4">Add a new trick</h1>
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                <div class="w-75 m-auto d-flex flex-column gap-4">
+                    <div class="form-group">
+                        {{ form_label(form.name, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.name, 
+                            {
+                                'attr': {
+                                    'class': 'form-control',
+                                    'autofocus': true
+                                }
+                            }) 
+                        }}
+                        {{ form_errors(form.name) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.description, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.description, 
+                            {
+                                'attr': {
+                                    'class': 'form-control'
+                                }
+                            }) 
+                        }}
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.category, null, 
+                            {
+                                'label_attr': {
+                                    'class': 'mb-2 text-light'
+                                }
+                            }) 
+                        }}
+                        {{ form_widget(form.category, 
+                            {
+                                'attr': {
+                                    'class': 'w-100 rounded p-2'
+                                }
+                            }
+                        )}}
+                        {{ form_errors(form.category) }}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="mb-2 text-light">Pictures</div>
+                        <div id="picture-container" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}" class="d-flex flex-column gap-2">
+                            {% for picture in form.pictures %}
+                                <div class="picture-item">
+                                    {{ form_widget(picture.file) }}
+                                    {{ form_errors(picture.file) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-outline-light btn-add-more w-100 mt-3" data-container="picture-container" data-name="pictures">
+                            + Add one more
+                        </button>
+                        <button type="button" id="remove-picture-btn" class="btn btn-outline-danger w-100 mt-3" style="display: none;">Remove</button>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="mb-2 text-light">Videos</div>
+                        <div id="video-container" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}" class="d-flex flex-column gap-2">
+                            {% for video in form.videos %}
+                                <div class="video-item">
+                                    {{ form_widget(video.url) }}
+                                    {{ form_errors(video.url) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-outline-light btn-add-more w-100 mt-3" data-container="video-container" data-name="videos">
+                            + Add one more
+                        </button>
+                        <button type="button" id="remove-video-btn" class="btn btn-outline-danger w-100 mt-3" style="display: none;">Remove</button>
+                    </div>
+                    <button type="submit" class="btn btn-light w-50 m-auto">Submit</button>
+                </div>
+
+            {{ form_end(form) }}
+
+    </div>
+
+</section>
+
+</div>
+{% endblock %}

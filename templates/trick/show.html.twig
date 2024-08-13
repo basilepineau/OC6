@@ -1,69 +1,88 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('assets/css/trick.css') }}"/>
-        <script src="{{ asset('assets/js/trick.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/pages/trick-show/trick-show.css') }}"/>
+    <script src="{{ asset('assets/js/trick/trick-show.js') }}"></script>
 {% endblock %}
 
 {% block title %}Trick {{ trick.name }}{% endblock %}
 
 
 {% block body %}
-<section>
-    <div class="container w-75 p-5">
+<section class="container">
+    <div class="col-md-9 m-auto p-5">
+        {% for flash_message in app.flashes('success') %}
+            <div class="alert alert-success mb-4">{{ flash_message }}</div>
+        {% endfor %}
         <div class="banner d-flex justify-content-center align-items-center position-relative">
             <img class="card-img-top img-fluid rounded w-100" src="{{ asset('assets/uploads/' ~ trick.pictures.first.url) }}">
             <div class="overlay-text display-1 position-absolute text-light">{{ trick.name }}</div>
             {% if trick.user == user %}
                 <div class="position-absolute top-0 end-0 p-3">
-                    <a href="{{ path('app_trick_edit', { 'id': trick.id }) }}" class="text-white"><i class="bi bi-lg bi-pencil mx-2"></i></a>
-                    <a href="{{ path('app_trick_delete', { 'id': trick.id }) }}" class="text-white"><i class="bi bi-lg bi-trash"></i></a>
+                    <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}" class="text-white"><i class="bi bi-lg bi-pencil mx-2"></i></a>
+                    <a href="{{ path('app_trick_delete', { 'slug': trick.slug }) }}" class="text-white"><i class="bi bi-lg bi-trash"></i></a>
                 </div>
             {% endif %}
         </div>
-        <div class="row gap-3 p-4">
-        {% for picture in trick.pictures %}
-            <div class="col-md-2">
-                <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded">
-            </div>
-        {% endfor %}
-        {% for video in trick.videos %}
-            <div class="col-md-2">
-                <div class="d-flex justify-content-center align-items-center rounded" style="height:100px; overflow:hidden">
-                    <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="img-fluid" width="560" height="315" src="https://www.youtube.com/embed/8KotvBY28Mo?si=ZzWj7Az1B2Cs5lqu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>                </div>
+        <div class="row p-4">
+            {% for picture in trick.pictures %}
+                <div class="col-md-2 p-2">
+                    <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded" data-bs-toggle="modal" data-bs-target="#imageModal-{{ picture.id }}">
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="imageModal-{{ picture.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content bg-primary ">
+                            <div class="modal-body">
+                                <img src="{{ asset('assets/uploads/' ~ picture.url) }}" class="img-fluid rounded">
+                            </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+            {% for video in trick.videos %}
+                <div class="col-md-2 p-2">
+                    <div class="video">
+                        <iframe class="rounded" width="100%" height="100%" src="https://www.youtube.com/embed/8KotvBY28Mo?si=ZzWj7Az1B2Cs5lqu" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
+        <h2 class="mt-4 text-light">Description</h2>
         <div class="text-light my-5">
             {{ trick.description }}
         </div>
-        <div class="row w-75 mx-auto y-5 border-bottom border-light py-5">
+        <div class="row col-md-10 mx-auto y-5 border-bottom border-light py-5 g-3">
             <div class="col-12 col-md-4">
-                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                <div class="d-flex flex-column border border-light rounded p-2 text-center bg-primary-dark">
                     <div class="text-light small">Created at</div>
                     <div class="text-light">{{ trick.createdAt|date('d/m/Y H:i') }}</div>
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                <div class="d-flex flex-column border border-light rounded p-2 text-center bg-primary-dark">
                     <div class="text-light small">Category</div>
                     <div class="text-light">{{ trick.category.name }}</div>
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="d-flex flex-column border border-light rounded p-2 text-center">
+                <div class="d-flex flex-column border border-light rounded p-2 text-center bg-primary-dark">
+                {% if trick.updatedAt is not null %}
                     <div class="text-light small">Edited at</div>
                     <div class="text-light">{{ trick.updatedAt|date('d/m/Y H:i') }}</div>
+                {% else %}
+                    <div class="text-light small">Edited at</div>
+                    <div class="text-light">/</div>
+                {% endif %}
                 </div>
             </div>
         </div>
-        <div class="w-75 mx-auto py-5 border-bottom border-light text-center">
+        <div class="col-md-10 mx-auto py-5 border-bottom border-light text-center">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <h2 class="text-light">Add a comment</h2>
                 {{ form_start(form) }}
-                <div class="d-flex flex-column gap-3 w-75 m-auto">
+                <div class="d-flex flex-column gap-3 col-md-10 m-auto">
                     {{ form_widget(form.text) }}
                     <button type="submit" class="btn btn-light w-50 m-auto">Submit</button>
                 </div>
@@ -74,16 +93,16 @@
                 </div>
             {% endif %}
         </div>
-        <div class="w-75 mx-auto my-5 d-flex flex-column gap-3" id="comment-container">
+        <div class="col-md-10 mx-auto my-5 d-flex flex-column gap-3" id="comment-container">
             {% for commentMain in commentMains %}
             <div class="row align-items-center comment d-none">
                 <div class="col-2 d-flex flex-column align-items-center gap-2">
-                    <img class="rounded-circle" style="width:60px; height:auto" src="{{ asset('assets/avatar/' ~ commentMain.user.avatar) }}">
-                    <div class="text-light">{{ commentMain.user.username }}</div>
+                    <img class="avatar rounded-circle" src="{{ asset('assets/avatar/' ~ commentMain.user.avatar) }}">
                 </div>
-                <div class="d-flex flex-column gap-3 col-10 border border-light rounded p-3">
-                    <div class="text-light small">{{ commentMain.createdAt | date('F j, Y \a\t h:i A') }}</div>
-                    <div class="text-light fs-5">{{ commentMain.text }}</div>
+                <div class="comment-text d-flex flex-column col-10 border border-light rounded p-3">
+                    <div class="text-light">{{ commentMain.user.username }}</div>
+                    <div class="small mb-3 date">{{ commentMain.createdAt | date('F j, Y \a\t h:i A') }}</div>
+                    <div class="text-light">{{ commentMain.text }}</div>
                 </div>
             </div>
             {% endfor %}
