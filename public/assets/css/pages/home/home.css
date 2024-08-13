@@ -1,3 +1,7 @@
+.card {
+  margin-bottom: 1rem; /* Spacing between rows of cards */
+}
+
 .section {
   background-color: rgb(83, 85, 129);
 }
@@ -10,13 +14,6 @@
   align-items: center;
   border-radius: 5px;
   border: 3px solid rgb(69, 71, 106);
-}
-
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  width: 100%;
 }
 
 .h2 {
@@ -33,14 +30,6 @@
 }
 
 .card {
-  background-color: white;
-  flex: 1 1 calc(20% - 40px); /* 20% per card minus the gap */
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  cursor: pointer;
   animation: fadeIn 0.3s ease-out;
   transition: 0.1s;
 }
@@ -75,7 +64,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-.card {
-  border: none;
 }
