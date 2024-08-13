@@ -1,0 +1,27 @@
+.bg-primary-dark {
+  background-color: #3f4162;
+}
+
+.bg-primary-darker {
+  background-color: #2b2c43;
+}
+
+.btn-primary-dark {
+  background-color: #3f4162;
+  color: white;
+}
+
+.btn-primary-dark:hover {
+  background-color: #2b2c43;
+  color: white;
+}
+
+.btn-primary-darker {
+  background-color: #2b2c43;
+  color: white;
+}
+
+.btn-primary-darker:hover {
+  background-color: #3f4162;
+  color: white;
+}

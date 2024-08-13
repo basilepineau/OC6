@@ -1,0 +1,28 @@
+@import "../variables";
+.bg-primary-dark {
+  background-color: $primary-dark;
+}
+
+.bg-primary-darker {
+  background-color: $primary-darker;
+}
+
+.btn-primary-dark {
+  background-color: $primary-dark;
+  color: white;
+}
+
+.btn-primary-dark:hover {
+  background-color: $primary-darker;
+  color: white;
+}
+
+.btn-primary-darker {
+  background-color: $primary-darker;
+  color: white;
+}
+
+.btn-primary-darker:hover {
+  background-color: $primary-dark;
+  color: white;
+}
