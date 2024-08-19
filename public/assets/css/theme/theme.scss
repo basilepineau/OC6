@@ -7,6 +7,14 @@
   background-color: $primary-darker;
 }
 
+.text-primary-dark {
+  color: $primary-dark;
+}
+
+.text-primary-darker {
+  color: $primary-darker;
+}
+
 .btn-primary-dark {
   background-color: $primary-dark;
   color: white;
@@ -25,4 +33,16 @@
 .btn-primary-darker:hover {
   background-color: $primary-dark;
   color: white;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.alert-success {
+  background-color: $primary-dark;
+  color: white;
+  border: none;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }

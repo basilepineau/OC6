@@ -1,3 +1,5 @@
+@import "../../variables";
+
 textarea {
   min-height: 200px;
 }
@@ -5,4 +7,16 @@ textarea {
 button,
 a.delete {
   min-width: 100px;
+}
+
+.edit-container {
+  // border: 1px solid white;
+}
+
+.add {
+  transition: 0.3s;
+}
+
+.add:hover {
+  background-color: $primary-dark;
 }

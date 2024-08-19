@@ -24,13 +24,13 @@
   height: 200px;
 }
 
-.video {
+.video-container {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
 }
 
-.video iframe {
+.video-container iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -44,4 +44,8 @@
 
 .date {
   color: rgb(133 139 145);
+}
+
+button {
+  min-width: 100px;
 }
