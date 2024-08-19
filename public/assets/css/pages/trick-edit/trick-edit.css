@@ -6,3 +6,11 @@ button,
 a.delete {
   min-width: 100px;
 }
+
+.add {
+  transition: 0.3s;
+}
+
+.add:hover {
+  background-color: #3f4162;
+}
