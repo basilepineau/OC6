@@ -5,7 +5,7 @@ namespace App\Service;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class ImageUploader
+class PictureService
 {
     private $uploadDirectory;
 
