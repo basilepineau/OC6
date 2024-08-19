@@ -33,4 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
       loadMoreButton.textContent = "No more tricks to load";
     }
   });
+
+  // Fonction pour supprimer les tricks
+  const deleteTrickModal = document.getElementById("deleteTrickModal");
+  const deleteTrickForm = document.getElementById("deleteTrickForm");
+
+  if (deleteTrickModal && deleteTrickForm) {
+    deleteTrickModal.addEventListener("show.bs.modal", function (event) {
+      // Button that triggered the modal
+      const button = event.relatedTarget;
+      const url = button.getAttribute("data-url");
+      const token = button.getAttribute("data-token");
+
+      if (url && token) {
+        // Update the form action and token
+        deleteTrickForm.action = url;
+        deleteTrickForm.querySelector('input[name="_token"]').value = token;
+
+        // Store a reference to the button that triggered the modal
+        deleteTrickModal.setAttribute("data-trigger-url", url);
+      } else {
+        console.error("URL or CSRF token is missing.");
+      }
+    });
+  }
 });
