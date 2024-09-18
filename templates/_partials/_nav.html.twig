@@ -1,5 +1,5 @@
       <!-- Navigation-->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary-dark">
+      <nav class="navbar navbar-expand-md navbar-dark bg-primary-dark d-none d-md-block">
         <div class="container px-5">
           <a class="navbar-brand" href="/">OC6</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,7 +11,7 @@
                 <a class="nav-link {{ app.request.get('_route') == 'app_homepage' ? 'active' : 'text-secondary' }}" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-secondary" href="/">Tricks</a>
+                <a class="nav-link {{ app.request.get('_route') == 'app_tricks' ? 'active' : 'text-secondary' }}" href="{{ path('app_tricks') }}">Tricks</a>
               </li>
               {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
@@ -23,7 +23,7 @@
                         {{ app.user.username }}
                       </button>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">My profile</a></li>
+                        <li><a class="dropdown-item" href="/profile">My profile</a></li>
                         <li><a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a></li>
                       </ul>
                     </div>
@@ -40,3 +40,28 @@
           </div>
         </div>
       </nav>
+
+<div class="d-flex justify-content-around align-items-center bg-primary-darker navbar-mobile position-fixed bottom-0 d-md-none">
+    <a href="/" class="fs-3 text-light text-center my-2">
+        <i class="bi {{ app.request.get('_route') == 'app_homepage' ? 'bi-house-fill' : 'bi-house' }}"></i>
+    </a>
+    <a href="/tricks" class="fs-3 text-light text-center my-2">
+        <i class="bi bi-list-ul"></i>
+    </a>
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href="/trick/new" class="fs-3 text-light text-center my-2">
+            <i class="bi {{ app.request.get('_route') == 'app_trick_new' ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+        </a>
+        <a href="/profile" class="fs-3 text-light text-center my-2">
+            <i class="bi {{ app.request.get('_route') == 'app_user_profile' ? 'bi-person-fill' : 'bi-person' }}"></i>
+        </a>
+        <a href="/logout" class="fs-3 text-light text-center my-2">
+            <i class="bi bi-box-arrow-right"></i>
+        </a>
+    {% else %}
+        <a href="/login" class="fs-3 text-light text-center my-2">
+            <i class="bi {{ app.request.get('_route') in ['app_login', 'app_register'] ? 'bi-person-fill' : 'bi-person' }}"></i>
+        </a>
+    {% endif %}
+</div>

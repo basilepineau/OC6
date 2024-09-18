@@ -1,35 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let btnSeeMedias = document.getElementById("see-medias");
-  let picturesContainer = document.querySelector(".pictures-container");
-  btnSeeMedias.addEventListener("click", function () {
-    if (picturesContainer.classList.contains("d-none")) {
-      picturesContainer.classList.remove("d-none");
-      btnSeeMedias.textContent = "Hide medias";
-    } else {
-      picturesContainer.classList.add("d-none");
-      btnSeeMedias.textContent = "See medias";
-    }
-  });
-
-  // Fonction pour agrandir les images
-  const pictureModal = document.getElementById("pictureModal");
-  const modalImage = document.getElementById("modalImage");
-
-  pictureModal.addEventListener("show.bs.modal", function (event) {
-    const button = event.relatedTarget;
-    const imageUrl = button.getAttribute("data-url");
-    modalImage.src = imageUrl;
-  });
-
   const commentContainer = document.getElementById("comment-container");
-  const loadMoreButton = document.getElementById("load-more");
+  const loadMoreButton = document.getElementById("load-more-comments");
   let visibleCount = 0;
   const startNumber = 5;
 
   function disableLoadMoreButton() {
-    loadMoreButton.setAttribute("disabled", true);
-    loadMoreButton.classList.add("text-muted");
-    loadMoreButton.innerHTML = "All comments are loaded.";
+    if (loadMoreButton) {
+      loadMoreButton.setAttribute("disabled", true);
+      loadMoreButton.classList.add("text-muted");
+      loadMoreButton.innerHTML = "All comments are loaded.";
+    }
   }
 
   // Fonction pour afficher un nombre spécifique de commentaires
@@ -50,18 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
   showComments(startNumber);
 
   // Gérer le clic sur le bouton "Charger Plus"
-  loadMoreButton.addEventListener("click", () => {
-    const comments = commentContainer.querySelectorAll(".comment");
-    const newVisibleCount = Math.min(
-      visibleCount + startNumber,
-      comments.length
-    );
-    showComments(newVisibleCount);
+  if (loadMoreButton) {
+    loadMoreButton.addEventListener("click", () => {
+      const comments = commentContainer.querySelectorAll(".comment");
+      const newVisibleCount = Math.min(
+        visibleCount + startNumber,
+        comments.length
+      );
+      showComments(newVisibleCount);
 
-    if (newVisibleCount >= comments.length) {
-      disableLoadMoreButton();
-    }
-  });
+      if (newVisibleCount >= comments.length) {
+        disableLoadMoreButton();
+      }
+    });
+  }
 
   // Fonction pour supprimer les commentaires
   const deleteCommentMainModal = document.getElementById(

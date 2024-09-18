@@ -14,7 +14,7 @@
   flex-direction: column;
   align-items: center;
   border-radius: 5px;
-  border: 3px solid rgb(69, 71, 106);
+  border: 2px solid rgb(69, 71, 106);
 }
 
 .h2 {
@@ -39,10 +39,9 @@
   box-shadow: 10px 10px 0px 0px rgba(255, 255, 255, 0.3);
 }
 
-#load-more {
+#load-more-tricks {
   margin-top: 50px;
   height: 50px;
-  width: 10%;
   border-radius: 5px;
   border: none;
   background-color: rgb(83, 85, 129);
@@ -51,7 +50,7 @@
   transition: 0.1s;
 }
 
-#load-more:not([disabled]):hover {
+#load-more-tricks:not([disabled]):hover {
   cursor: pointer;
   box-shadow: 9px 7px 0px 0px rgb(69, 71, 106);
 }

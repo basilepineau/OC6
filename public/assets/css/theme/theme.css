@@ -39,8 +39,21 @@
 }
 
 .alert-success {
-  background-color: #3f4162;
+  background-color: #1a8754;
   color: white;
   border: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+@media (min-width: 480px) {
+  i.fs-4 {
+    font-size: inherit !important;
+  }
+}
+i {
+  transition: 0.3s;
+}
+
+i:hover {
+  opacity: 0.7;
 }

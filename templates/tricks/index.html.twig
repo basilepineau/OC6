@@ -7,45 +7,13 @@
 
 {% block body %}
 
-    <!-- Header-->
-    <header class="bg-primary py-5">
-        {% for flash_message in app.flashes('success') %}
-            <div class="alert alert-success text-center mb-4 rounded-0">{{ flash_message }}</div>
-        {% endfor %}
-        {% for flash_info in app.flashes('info') %}
-            <div class="alert alert-info rounded-0 text-center mb-4">{{ flash_info }}</div>
-        {% endfor %}
-        <div class="container px-5 position-relative">
-            <div class="row gx-5 align-items-center justify-content-center">
-                <div class="col-lg-8 col-xl-7 col-xxl-6">
-                    <div class="my-5 text-center text-xl-start">
-                        <h1 class="display-3 fw-bolder text-white mb-2">
-                            Learn, share, and ride !
-                        </h1>
-                        <p class="lead fw-normal text-white-50 mb-4">
-                            Our collaborative site allows you to discover, learn, and master snowboard tricks. Join an active community of riders, share your knowledge, and benefit from the experience of others to progress quickly.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
-                    <img class="img-fluid rounded-3 my-5" src="{{ asset('assets/uploads/snowboard1.png') }}">
-                </div>
-            </div>
-            <div class="d-flex justify-content-end ">
-                <a href="#tricks" class="btn btn-outline-light">
-                    <i class="bi bi-arrow-down"></i>
-                </a>
-            </div>
-        </div>
-    </header>
-
     <section class="py-5 container-fluid" id="tricks">
         <div class="container px-5 my-5">
             <div class="h2">Find the trick you wanna learn !</div>
             <div class="h3">Our collabs added 100+ tutorials...</div>
             <div id="card-container" class="row">
             {% for trick in tricks %}
-            <div class="trick-container col-md-6 col-xl-3 mb-3 mb-lg-0 d-none">
+            <div class="trick-container col-md-3 mb-3 mb-lg-0 d-none">
                 <div class="card border-0">
                     <img class="card-img-top" 
                         src="{{ trick.pictures|length > 0 ? asset('assets/uploads/' ~ trick.pictures.first.url) : asset('assets/uploads/cropped-default-placeholder.png') }}" 
@@ -56,13 +24,13 @@
                         </div>
                         {% if trick.user == user %}
                             <div class="border border-primary rounded p-1 d-flex gap-1 shadow">
-                                <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}"><i class="bi bi-lg bi-pencil fs-4 mx-2"></i></a>
+                                <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}"><i class="bi bi-lg bi-pencil mx-2"></i></a>
                                 <a class="cursor-pointer"
                                     data-bs-toggle="modal" 
                                     data-bs-target="#deleteTrickModal"
                                     data-url="{{ path('app_trick_delete', {slug: trick.slug}) }}" 
                                     data-token="{{ csrf_token('delete' ~ trick.slug) }}"
-                                ><i class="bi bi-lg fs-4 bi-trash text-danger"></i></a>
+                                ><i class="bi bi-lg bi-trash text-danger"></i></a>
                             </div>
                         {% endif %}
                     </div>
