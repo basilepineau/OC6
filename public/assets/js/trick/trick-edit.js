@@ -48,29 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Hide the modal
             const bsModal = bootstrap.Modal.getInstance(deletePictureModal);
             bsModal.hide();
-
-            // Find the button that triggered the modal using the stored URL
-            const triggerUrl =
-              deletePictureModal.getAttribute("data-trigger-url");
-            const button = document.querySelector(`[data-url="${triggerUrl}"]`);
-
-            // Find the closest .col-md-2 and remove it
-            if (button) {
-              const pictureElement = button.closest(".col-md-2");
-              if (pictureElement) {
-                pictureElement.remove();
-              } else {
-                console.error(
-                  "Unable to find the parent element with class '.col-md-2'"
-                );
-              }
-            } else {
-              console.error(
-                "Unable to find the button with data-url:",
-                triggerUrl
-              );
-            }
-            showToast("Picture deleted successfully !");
+            refreshMedias();
+            showToast("Picture deleted successfully!");
           } else {
             alert(
               data.error || "An error occurred while deleting the picture."
@@ -122,28 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Hide the modal
             const bsModal = bootstrap.Modal.getInstance(deleteVideoModal);
             bsModal.hide();
-
-            // Find the button that triggered the modal using the stored URL
-            const triggerUrl =
-              deleteVideoModal.getAttribute("data-trigger-url");
-            const button = document.querySelector(`[data-url="${triggerUrl}"]`);
-
-            // Find the closest .col-md-2 and remove it
-            if (button) {
-              const videoElement = button.closest(".col-md-2");
-              if (videoElement) {
-                videoElement.remove();
-              } else {
-                console.error(
-                  "Unable to find the parent element with class '.col-md-2'"
-                );
-              }
-            } else {
-              console.error(
-                "Unable to find the button with data-url:",
-                triggerUrl
-              );
-            }
+            refreshMedias();
             showToast("Video deleted successfully !");
           } else {
             alert(data.error || "An error occurred while deleting the video.");
@@ -157,23 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fonction pour ajouter une image
   const addPictureForm = document.getElementById("addPictureForm");
-  const trickSlug = "{{ trick.slug }}";
-
-  // Function to insert after the last picture or video
-  function insertAfterLastElementOfClass(newElement, className) {
-    // Find all elements with the specified class
-    const elements = document.getElementsByClassName(className);
-    if (elements.length > 0) {
-      // Get the last element with the specified class
-      const lastElement = elements[elements.length - 1];
-      // Insert the new element after the last element
-      lastElement.parentNode.insertBefore(newElement, lastElement.nextSibling);
-    } else {
-      // If no elements with the class exist, append the new element at the end of the container
-      const container = document.querySelector(".row.p-4"); // Update with the correct container selector
-      container.appendChild(newElement);
-    }
-  }
+  const slugElement = document.getElementById("slug");
+  const trickSlug = slugElement.getAttribute("data-slug");
+  const nameElement = document.getElementById("name");
+  const trickName = nameElement.getAttribute("data-name");
 
   if (addPictureForm) {
     addPictureForm.addEventListener("submit", function (event) {
@@ -189,31 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            // Create a new picture element dynamically
-            const newPictureDiv = document.createElement("div");
-            newPictureDiv.classList.add(
-              "col-md-2",
-              "p-2",
-              "d-flex",
-              "flex-column",
-              "gap-2",
-              "picture"
-            );
-            newPictureDiv.innerHTML = `
-                        <img src="/assets/uploads/${data.url}" class="img-fluid rounded cursor-pointer" data-bs-toggle="modal" data-bs-target="#pictureModal" data-url="/assets/uploads/${data.url}">
-                        <div class="edit-container w-50 d-flex gap-2 rounded align-self-end">
-                            <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#editPictureModal"><i class="bi bi-lg bi-pencil mx-2 text-light"></i></div>
-                            <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deletePictureModal" data-url="${data.deleteUrl}" data-token="${data.csrfToken}"><i class="bi bi-lg bi-trash text-light"></i></div>
-                        </div>
-                    `;
-
-            insertAfterLastElementOfClass(newPictureDiv, "picture");
             // Afficher la notification toast
             showToast("Picture added successfully !");
             // Fermer le modal
             bootstrap.Modal.getInstance(
               document.getElementById("addPicture")
             ).hide();
+            refreshMedias();
           } else {
             alert(data.error || "An error occurred while adding the picture.");
           }
@@ -240,27 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            // Ajoute dynamiquement la vidéo à la page
-            const newVideoDiv = document.createElement("div");
-            newVideoDiv.classList.add(
-              "col-md-2",
-              "p-2",
-              "d-flex",
-              "flex-column",
-              "gap-2",
-              "video"
-            );
-            newVideoDiv.innerHTML = `
-                <div class="video-container">
-                    <iframe class="rounded" width="100%" height="100%" src="https://www.youtube.com/embed/${data.url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <div class="edit-container w-50 d-flex gap-2 rounded align-self-end">
-                    <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#editVideoModal"><i class="bi bi-lg bi-pencil mx-2 text-light"></i></div>
-                    <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deleteVideoModal" data-url="${data.deleteUrl}" data-token="${data.csrfToken}"><i class="bi bi-lg bi-trash text-light"></i></div>
-                </div>
-            `;
-            insertAfterLastElementOfClass(newVideoDiv, "video");
-
+            refreshMedias();
             // Afficher la notification toast
             showToast("Video added successfully !");
             // Fermer le modal
@@ -288,6 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const token = button.getAttribute("data-token");
       const id = button.getAttribute("data-id");
 
+      const inputElement = editPictureForm.querySelector(
+        'input[name="picture"]'
+      );
+      if (inputElement) {
+        inputElement.value = ""; // Vide l'input à chaque ouverture du modal
+      }
+
       if (url && token && id) {
         editPictureForm.action = url;
         editPictureForm.querySelector('input[name="_token"]').value = token;
@@ -302,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formData = new FormData(editPictureForm);
       const actionUrl = editPictureForm.action;
-      console.log(actionUrl);
 
       fetch(actionUrl, {
         method: "POST",
@@ -311,19 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            const id = editPictureModal.getAttribute("data-picture-id");
-            const imgElement = document.querySelector(`img[data-id="${id}"]`);
-            if (imgElement) {
-              imgElement.src = "/assets/uploads/" + data.url;
-            }
-
-            const deleteButton = document.querySelector(
-              `div[data-id="${id}"] .cursor-pointer[data-bs-target="#deletePictureModal"]`
-            );
-            if (deleteButton) {
-              deleteButton.setAttribute("data-token", data.csrfToken);
-            }
-
+            refreshMedias();
             showToast("Picture updated successfully!");
             bootstrap.Modal.getInstance(editPictureModal).hide();
           } else {
@@ -369,13 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            const id = editVideoModal.getAttribute("data-video-id");
-            const iframeElement = document.querySelector(
-              `iframe[data-id="${id}"]`
-            );
-            if (iframeElement) {
-              iframeElement.src = "https://www.youtube.com/embed/" + data.url;
-            }
+            refreshMedias();
 
             showToast("Video updated successfully!");
             bootstrap.Modal.getInstance(editVideoModal).hide();
@@ -387,5 +282,138 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("An error occurred: " + error.message);
         });
     });
+  }
+
+  // Fonction pour mettre à jour la bannière et les médias après une modification
+  let mediasContainer = document.querySelector(".medias-container");
+  let bannerContainer = document.querySelector(".banner");
+
+  // Fonction pour mettre à jour la bannière
+  function updateBanner(trick) {
+    bannerContainer.innerHTML = ""; // Vider la bannière
+
+    let imgSrc =
+      trick.pictures.length > 0
+        ? `/assets/uploads/${trick.pictures[0].url}`
+        : "/assets/uploads/cropped-default-placeholder.png";
+
+    const bannerHTML = `
+      <img class="card-img-top img-fluid rounded w-100 border border-light" 
+          src="${imgSrc}" 
+          data-id="${trick.pictures.length > 0 ? trick.pictures[0].id : ""}">
+      <div class="position-absolute top-0 end-0 p-3 bg-primary rounded m-2 bg-primary-dark d-flex gap-2 shadow">
+          <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#addPicture">
+              <i class="bi bi-lg bi-pencil mx-2 text-light"></i>
+          </div>
+      </div>
+      <div class="overlay-text display-1 position-absolute text-light">${trickName}</div>
+      ${
+        trick.pictures.length > 0
+          ? `<div class="position-absolute top-0 end-0 p-3 bg-primary rounded m-2 bg-primary-dark d-flex gap-2 shadow">
+              <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#editPictureModal"
+                  data-id="${trick.pictures[0].id}" 
+                  data-url="/trick/${trickSlug}/edit-picture/${trick.pictures[0].id}" 
+                  data-token="${trick.pictures[0].csrfToken}">
+                  <i class="bi bi-lg bi-pencil mx-2 text-light"></i>
+              </div>
+              <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deletePictureModal"
+                  data-url="/trick/${trickSlug}/delete-picture/${trick.pictures[0].id}" 
+                  data-trick-slug="${trickSlug}" 
+                  data-picture-id="${trick.pictures[0].id}" 
+                  data-token="${trick.pictures[0].csrfToken}">
+                  <i class="bi bi-lg bi-trash text-danger"></i>
+              </div>
+          </div>`
+          : ""
+      }
+    `;
+
+    bannerContainer.insertAdjacentHTML("beforeend", bannerHTML);
+  }
+
+  function updateMedias(trick) {
+    mediasContainer.innerHTML = ""; // Vider les médias
+
+    if (trick.pictures.length > 1) {
+      trick.pictures.slice(1).forEach((picture) => {
+        const pictureHTML = `
+          <div class="picture col-md-2 p-2 d-flex flex-column gap-2">
+              <img src="/assets/uploads/${picture.url}" class="img-fluid rounded cursor-pointer border border-light" data-bs-toggle="modal" data-bs-target="#pictureModal" data-id="${picture.id}" data-url="/assets/uploads/${picture.url}">
+              <div class="edit-container col-3 col-lg-12 d-flex gap-2 rounded justify-content-center align-self-center bg-primary-dark">
+                  <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#editPictureModal" data-id="${picture.id}" data-url="/trick/${trickSlug}/edit-picture/${picture.id}" data-token="${picture.csrfToken}">
+                      <i class="bi bi-lg bi-pencil mx-2 text-light"></i>
+                  </div>
+                  <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deletePictureModal" data-url="/trick/${trickSlug}/delete-picture/${picture.id}" data-token="${picture.csrfToken}">
+                      <i class="bi bi-lg bi-trash text-danger"></i>
+                  </div>
+              </div>
+          </div>
+        `;
+        mediasContainer.insertAdjacentHTML("beforeend", pictureHTML);
+      });
+    }
+    trick.videos.forEach((video) => {
+      const videoHTML = `
+        <div class="video col-md-2 p-2 d-flex flex-column gap-2">
+            <div class="video-container">
+                <iframe class="rounded border border-light" width="100%" height="100%" data-id="${video.id}" src="https://www.youtube.com/embed/${video.url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+            <div class="edit-container col-3 col-lg-12 d-flex gap-2 rounded justify-content-center align-self-center bg-primary-dark">
+                <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#editVideoModal" data-id="${video.id}" data-url="/trick/${trickSlug}/edit-video/${video.id}" data-token="${video.csrfToken}">
+                    <i class="bi bi-lg bi-pencil mx-2 text-light"></i>
+                </div>
+                <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deleteVideoModal" data-url="/trick/${trickSlug}/delete-video/${video.id}" data-token="${video.csrfToken}">
+                    <i class="bi bi-lg bi-trash text-danger"></i>
+                </div>
+            </div>
+        </div>
+      `;
+      mediasContainer.insertAdjacentHTML("beforeend", videoHTML);
+    });
+
+    const addMediaButtonsHTML = `
+      <div class="col-md-2 p-2 d-flex flex-column gap-2">
+          <button 
+              class="add btn btn-primary d-flex flex-column justify-content-center align-items-center text-white border border-white rounded h-100 cursor-pointer"
+              data-bs-toggle="modal" 
+              data-bs-target="#addPicture"
+          >
+              <div>+ picture</div>
+          </button>
+          <div class="edit-container w-50 d-flex gap-2 rounded align-self-end invisible">
+                  <a><i class="bi bi-lg bi-pencil mx-2 text-light"></i></a>
+                  <a><i class="bi bi-lg bi-trash text-light"></i></a>
+          </div>
+      </div>
+      <div class="col-md-2 p-2 d-flex flex-column gap-2">
+          <button 
+              class="btn btn-primary add d-flex flex-column justify-content-center align-items-center text-white border border-white rounded h-100 cursor-pointer"
+              data-bs-toggle="modal" 
+              data-bs-target="#addVideo"
+          >
+              <div>+ video</div>
+          </button>
+          <div class="edit-container w-50 d-flex gap-2 rounded align-self-end invisible">
+                  <a><i class="bi bi-lg bi-pencil mx-2 text-light"></i></a>
+                  <a><i class="bi bi-lg bi-trash text-light"></i></a>
+          </div>
+      </div>
+    `;
+    mediasContainer.insertAdjacentHTML("beforeend", addMediaButtonsHTML);
+  }
+
+  function refreshMedias() {
+    fetch(`/trick/${trickSlug}/get-media`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          updateBanner(data);
+          updateMedias(data);
+        } else {
+          console.error("Failed to fetch trick media data");
+        }
+      })
+      .catch((error) => console.error("Error fetching media data:", error));
   }
 });

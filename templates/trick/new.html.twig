@@ -11,10 +11,10 @@
 {% block body %}
 
 <section>
-    <div class="col-md-9 m-auto p-5">
+    <div class="container col-11 col-lg-9 m-auto py-5 px-lg-5">
         <h1 class="text-center text-light mb-4">Add a new trick</h1>
             {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-                <div class="w-75 m-auto d-flex flex-column gap-4">
+                <div class="col-12 col-lg-9 m-auto d-flex flex-column gap-4">
                     <div class="form-group">
                         {{ form_label(form.name, null, 
                             {
@@ -101,7 +101,7 @@
                         </button>
                         <button type="button" id="remove-video-btn" class="btn btn-outline-danger w-100 mt-3" style="display: none;">Remove</button>
                     </div>
-                    <button type="submit" class="btn btn-light w-50 m-auto">Submit</button>
+                    <button type="submit" class="col-6 btn btn-primary-darker text-light m-auto">Submit</button>
                 </div>
 
             {{ form_end(form) }}

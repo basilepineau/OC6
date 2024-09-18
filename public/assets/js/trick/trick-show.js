@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
+  let btnSeeMedias = document.getElementById("see-medias");
+  let picturesContainer = document.querySelector(".pictures-container");
+  btnSeeMedias.addEventListener("click", function () {
+    if (picturesContainer.classList.contains("d-none")) {
+      picturesContainer.classList.remove("d-none");
+      btnSeeMedias.textContent = "Hide medias";
+    } else {
+      picturesContainer.classList.add("d-none");
+      btnSeeMedias.textContent = "See medias";
+    }
+  });
+
   // Fonction pour agrandir les images
   const pictureModal = document.getElementById("pictureModal");
   const modalImage = document.getElementById("modalImage");
@@ -51,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Fonction pour supprimer les images
+  // Fonction pour supprimer les commentaires
   const deleteCommentMainModal = document.getElementById(
     "deleteCommentMainModal"
   );
@@ -130,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Fonction pour éditer les CommentMain
+  // Fonction pour éditer les commentaires
   const editCommentMainModal = document.getElementById("editCommentMainModal");
   const editCommentMainForm = document.getElementById("editCommentMainForm");
 
@@ -140,13 +152,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const url = button.getAttribute("data-url");
       const token = button.getAttribute("data-token");
       const id = button.getAttribute("data-id");
+      const text = button.getAttribute("data-text");
 
-      if (url && token && id) {
+      if (url && token && id && text !== null) {
+        // Mettre à jour l'action du formulaire et le token CSRF
         editCommentMainForm.action = url;
         editCommentMainForm.querySelector('input[name="_token"]').value = token;
         editCommentMainModal.setAttribute("data-comment-main-id", id);
+
+        // Pré-remplir le textarea avec le texte du commentaire
+        document.getElementById("edit-comment-main-text").value = text;
       } else {
-        console.error("CSRF token, or ID is missing.");
+        console.error("URL, CSRF token, ID, or comment text is missing.");
       }
     });
 
@@ -163,13 +180,21 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            console.log(data.text);
+            // Mettre à jour le commentaire affiché avec le texte modifié
             document.getElementById(data.id).innerText = data.text;
+
+            // Mettre à jour le data-text de l'élément déclencheur
+            const triggerButton = document.querySelector(
+              `[data-id="${data.id}"]`
+            );
+            if (triggerButton) {
+              triggerButton.setAttribute("data-text", data.text);
+            }
 
             showToast("Comment updated successfully!");
             bootstrap.Modal.getInstance(editCommentMainModal).hide();
           } else {
-            alert(data.error || "An error occurred while editing the video.");
+            alert(data.error || "An error occurred while editing the comment.");
           }
         })
         .catch((error) => {

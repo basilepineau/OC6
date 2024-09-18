@@ -9,7 +9,9 @@ use App\Entity\Trick;
 use App\Entity\Video;
 use App\Form\CommentMainType;
 use App\Form\TrickType;
+use App\Security\Voter\TrickVoter;
 use App\Service\PictureService;
+use App\Service\TrickMediaService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class TrickController extends AbstractController
@@ -32,6 +35,19 @@ class TrickController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->pictureService = $pictureService;
+    }
+
+    #[Route('/tricks', name: 'app_tricks')]
+    public function index(): Response
+    {
+        $repository = $this->entityManager->getRepository(Trick::class);
+        $tricks = $repository->findAll();
+        $user = $this->getUser();
+
+        return $this->render('tricks/index.html.twig', [
+            'tricks' => $tricks,
+            'user' => $user
+        ]);
     }
 
     #[Route('/trick/new', name: 'app_trick_new')]
@@ -120,12 +136,15 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/edit', name: 'app_trick_edit')]
-    public function edit($slug, Request $request): Response
+    public function edit(string $slug, Request $request): Response
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
+        
         if (!$trick) {
             throw $this->createNotFoundException('The trick does not exist');
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
 
         $form = $this->createForm(TrickType::class, $trick, [
             'remove_pictures' => true,
@@ -148,12 +167,14 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/delete', name: 'app_trick_delete')]
-    public function delete($slug, Request $request, ParameterBagInterface $params): Response
+    public function delete(string $slug, Request $request, ParameterBagInterface $params): Response
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             throw $this->createNotFoundException('The trick does not exist.');
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::DELETE, $trick);
 
         if ($this->isCsrfTokenValid('delete'.$trick->getSlug(), $request->request->get('_token'))) {
             // Supprimer du serveur les images associées au trick du serveur
@@ -178,16 +199,25 @@ class TrickController extends AbstractController
             $this->addFlash('error', 'Invalid CSRF token');
         }
 
+        $referer = $request->headers->get('referer');
+        if ($referer && strpos($referer, '/profile') !== false) {
+            return $this->redirectToRoute('app_user_profile'); // Remplacez par le nom de votre route de profil
+        }
+    
+        return $this->redirectToRoute('app_homepage');
+
         return $this->redirectToRoute('app_homepage');
     }
 
     #[Route('/trick/{slug}/edit-comment-main/{id}', name: 'app_trick_edit_comment_main', methods: ['POST'])]
-    public function editCommentMain($slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    public function editCommentMain(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
 
         $comment = $this->entityManager->getRepository(CommentMain::class)->find($id);
         if (!$comment || $comment->getTrick() !== $trick) {
@@ -208,12 +238,14 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/delete-comment-main/{id}', name: 'app_trick_delete_comment_main', methods: ['POST', 'DELETE'])]
-    public function deleteCommentMain($slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
+    public function deleteCommentMain(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
     
         $comment = $this->entityManager->getRepository(CommentMain::class)->find($id);
         if (!$comment || $comment->getTrick() !== $trick) {
@@ -233,12 +265,14 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/add-picture', name: 'app_trick_add_picture', methods: ['POST'])]
-    public function addPicture($slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    public function addPicture(string $slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
 
         $file = $request->files->get('picture');
 
@@ -259,18 +293,21 @@ class TrickController extends AbstractController
             'success' => 'Picture added successfully.',
             'url' => $newFilename,
             'id' => $picture->getId(),
+            'data_url' => '/trick/'.$trick->getSlug().'/edit-picture/'.$picture->getId(),
             'deleteUrl' => '/trick/'.$trick->getSlug().'/delete-picture/'. $picture->getId(),
             'csrfToken' => $csrfToken
         ], Response::HTTP_OK);
     }
 
     #[Route('/trick/{slug}/edit-picture/{id}', name: 'app_trick_edit_picture', methods: ['POST'])]
-    public function editPicture($slug, $id, Request $request, ParameterBagInterface $params, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    public function editPicture(string $slug, $id, Request $request, ParameterBagInterface $params, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
 
         $picture = $this->entityManager->getRepository(Picture::class)->find($id);
         if (!$picture || $picture->getTrick() !== $trick) {
@@ -295,6 +332,8 @@ class TrickController extends AbstractController
                 'success' => 'Picture updated successfully.',
                 'url' => $newFilename,
                 'id' => $picture->getId(),
+                'data_url' => '/trick/'.$trick->getSlug().'/edit-picture/'.$picture->getId(),
+                'deleteUrl' => '/trick/'.$trick->getSlug().'/delete-picture/'. $picture->getId(),
                 'csrfToken' => $csrfTokenManager->getToken('delete-picture' . $picture->getId())->getValue()
             ], Response::HTTP_OK);
         }
@@ -303,12 +342,14 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/delete-picture/{id}', name: 'app_trick_delete_picture', methods: ['POST', 'DELETE'])]
-    public function deletePicture($slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
+    public function deletePicture(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
     
         $picture = $this->entityManager->getRepository(Picture::class)->find($id);
         if (!$picture || $picture->getTrick() !== $trick) {
@@ -340,87 +381,100 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/{slug}/add-video', name: 'app_trick_add_video', methods: ['POST'])]
-    public function addVideo($slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    public function addVideo(string $slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
 
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
+    
         $videoUrl = $request->request->get('video_url');
         if (!$videoUrl) {
             return new JsonResponse(['error' => 'Invalid video URL.'], Response::HTTP_BAD_REQUEST);
         }
-
+    
         $queryString = parse_url($videoUrl, PHP_URL_QUERY);
         parse_str($queryString, $params);
         $url = $params['v'] ?? null;
-
+    
         if (!$url) {
             return new JsonResponse(['error' => 'Invalid YouTube URL format.'], Response::HTTP_BAD_REQUEST);
         }
-
+    
         $video = new Video();
         $video->setUrl($url);
         $trick->addVideo($video);
-
+    
         $this->entityManager->persist($video);
         $this->entityManager->flush();
-
+    
         // Generate a new CSRF token for the delete action
         $csrfToken = $csrfTokenManager->getToken('delete-video' . $video->getId())->getValue();
-
+        $csrfTokenEdit = $csrfTokenManager->getToken('edit-video' . $video->getId())->getValue();
+    
         return new JsonResponse([
             'success' => 'Video added successfully.',
             'url' => $url,
             'id' => $video->getId(),
+            'data_url' => '/trick/'.$trick->getSlug().'/edit-video/'.$video->getId(),
             'deleteUrl' => '/trick/'.$trick->getSlug().'/delete-video/'. $video->getId(),
-            'csrfToken' => $csrfToken
+            'csrfToken' => $csrfTokenEdit,
+            'csrfTokenDelete' => $csrfToken
         ], Response::HTTP_OK);
     }
 
     #[Route('/trick/{slug}/edit-video/{id}', name: 'app_trick_edit_video', methods: ['POST'])]
-    public function editVideo($slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    public function editVideo(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
 
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
+    
         $video = $this->entityManager->getRepository(Video::class)->find($id);
         if (!$video || $video->getTrick() !== $trick) {
             return new JsonResponse(['error' => 'The video does not exist or does not belong to this trick.'], Response::HTTP_NOT_FOUND);
         }
-
+    
         $youtubeUrl = $request->request->get('url');
         if ($youtubeUrl) {
             $queryString = parse_url($youtubeUrl, PHP_URL_QUERY);
             parse_str($queryString, $params);
             $url = $params['v'] ?? null;
-
+    
             if ($url) {
                 $video->setUrl($url);
                 $this->entityManager->flush();
-
+    
                 return new JsonResponse([
                     'success' => 'Video updated successfully.',
                     'url' => $url,
                     'id' => $video->getId(),
-                    'csrfToken' => $csrfTokenManager->getToken('edit-video' . $video->getId())->getValue()
+                    'data_url' => '/trick/'.$trick->getSlug().'/edit-video/'.$video->getId(),
+                    'deleteUrl' => '/trick/'.$trick->getSlug().'/delete-video/'. $video->getId(),
+                    'csrfToken' => $csrfTokenManager->getToken('edit-video' . $video->getId())->getValue(),
+                    'csrfTokenDelete' => $csrfTokenManager->getToken('delete-video' . $video->getId())->getValue()
                 ], Response::HTTP_OK);
             }
         }
-
+    
         return new JsonResponse(['error' => 'Invalid data provided.'], Response::HTTP_BAD_REQUEST);
     }
+    
 
     #[Route('/trick/{slug}/delete-video/{id}', name: 'app_trick_delete_video', methods: ['POST', 'DELETE'])]
-    public function deleteVideo($slug, $id, Request $request): JsonResponse
+    public function deleteVideo(string $slug, $id, Request $request): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
             return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
         }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
     
         $video = $this->entityManager->getRepository(Video::class)->find($id);
         if (!$video || $video->getTrick() !== $trick) {
@@ -438,4 +492,22 @@ class TrickController extends AbstractController
         }
     }
     
+    #[Route('/trick/{slug}/get-media', name: 'app_trick_get_media', methods: ['GET'])]
+    public function getMedia(string $slug, TrickMediaService $trickMediaService): JsonResponse
+    {
+        // Fetch the Trick entity
+        $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
+        if (!$trick) {
+            return new JsonResponse(['error' => 'The trick does not exist.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
+
+        // Fetch updated media
+        $updatedMedia = $trickMediaService->getUpdatedMedia($trick);
+
+        // Return the updated media
+        return new JsonResponse($updatedMedia, Response::HTTP_OK);
+    }
+
 }
