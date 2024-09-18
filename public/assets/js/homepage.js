@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const cards = document.querySelectorAll("#card-container .col-md-3");
-  const loadMoreButton = document.getElementById("load-more");
+  const cards = document.querySelectorAll("#card-container .trick-container");
+  const loadMoreButton = document.getElementById("load-more-tricks");
 
   let visibleCount = 0;
   const initialVisible = 8; // Nombre de cartes visibles au début
@@ -19,20 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // Afficher les premières `initialVisible` cartes
   showCards(initialVisible);
 
-  // Gérer le clic sur le bouton "Load More"
-  loadMoreButton.addEventListener("click", () => {
-    const newVisibleCount = Math.min(
-      visibleCount + loadMoreCount,
-      cards.length
-    );
-    showCards(newVisibleCount);
+  if (loadMoreButton) {
+    // Gérer le clic sur le bouton "Load more"
+    loadMoreButton.addEventListener("click", () => {
+      const newVisibleCount = Math.min(
+        visibleCount + loadMoreCount,
+        cards.length
+      );
+      showCards(newVisibleCount);
 
-    if (newVisibleCount >= cards.length) {
-      loadMoreButton.setAttribute("disabled", true);
-      loadMoreButton.classList.add("btn-secondary");
-      loadMoreButton.textContent = "No more tricks to load";
-    }
-  });
+      if (newVisibleCount >= cards.length) {
+        loadMoreButton.setAttribute("disabled", true);
+        loadMoreButton.classList.add("btn-secondary");
+        loadMoreButton.textContent = "No more tricks to load";
+      }
+    });
+  }
 
   // Fonction pour supprimer les tricks
   const deleteTrickModal = document.getElementById("deleteTrickModal");
