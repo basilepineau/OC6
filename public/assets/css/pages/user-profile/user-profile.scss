@@ -1,0 +1,43 @@
+@import "../../variables";
+
+.nav button {
+  color: $primary-darker !important;
+  border: 1px solid $primary-darker !important;
+  transition: 0.3s !important;
+}
+
+.nav button:hover {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+}
+
+.nav button.nav-link.active {
+  color: white !important;
+  background-color: $primary-darker !important;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+#tricks .container,
+#comments .container,
+#profile .container {
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  border: 3px solid rgb(69 71 106);
+  padding: 60px 40px;
+}
+
+.comment-text a {
+  color: $primary-darker;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.mainAvatar {
+  width: 150px;
+}
+
+.avatar {
+  width: 100%;
+}

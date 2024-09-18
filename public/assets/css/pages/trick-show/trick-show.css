@@ -1,7 +1,7 @@
-#load-more {
-  margin-top: 50px;
+#see-medias {
+  margin: 50px 0 30px 0;
+  width: 30%;
   height: 50px;
-  width: 10%;
   border-radius: 5px;
   border: none;
   background-color: rgba(103, 106, 157, 0.3);
@@ -10,7 +10,22 @@
   transition: 0.1s;
 }
 
-#load-more:not([disabled]):hover {
+#load-more,
+#load-more-tricks,
+#load-more-comments {
+  margin-top: 50px;
+  height: 50px;
+  border-radius: 5px;
+  border: none;
+  background-color: rgba(103, 106, 157, 0.3);
+  color: white;
+  box-shadow: 4px 4px 0px 0px rgb(69, 71, 106);
+  transition: 0.1s;
+}
+
+#load-more:not([disabled]):hover,
+#load-more-tricks:not([disabled]):hover,
+#load-more-comments:not([disabled]):hover {
   cursor: pointer;
   box-shadow: 9px 7px 0px 0px rgb(69, 71, 106);
 }
