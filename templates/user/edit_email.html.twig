@@ -1,0 +1,35 @@
+{# templates/user/edit_email.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit email{% endblock %}
+
+{% block body %}
+    <div class="container col-12 col-lg-6 py-5">
+        <h1 class="text-center text-light mb-4">Edit email</h1>
+
+        {{ form_start(form) }}
+
+        <div class="col-10 col-lg-9 border border px-2 py-4 rounded mt-4 shadow m-auto">
+            <div class="col-10 col-lg-8 m-auto d-flex flex-column gap-4">
+                <div class="form-group">
+                    <div class="mb-2 text-light">
+                        {{ form_label(form.newEmail) }}
+                    </div>
+                    {{ form_widget(form.newEmail, {
+                        'attr': {
+                            'class': 'form-control',
+                            'autofocus': true
+                        }
+                    }) }}
+                    {{ form_errors(form.newEmail) }}
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="col-10 col-lg-8 btn btn-primary-darker text-light">Save new email</button>
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
