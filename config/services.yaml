@@ -6,6 +6,7 @@
 parameters:
   app.base_url: "%env(APP_BASE_URL)%"
   upload_directory: "%env(UPLOAD_DIRECTORY)%"
+  avatar_directory: "%env(AVATAR_DIRECTORY)%"
 services:
   # default configuration for services in *this* file
   _defaults:
@@ -18,8 +19,11 @@ services:
     resource: "../src/"
     exclude:
       - "../src/DependencyInjection/"
-      - "../src/Entity/"
       - "../src/Kernel.php"
+
+  App\EventListener\TimezoneListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request }
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
