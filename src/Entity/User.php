@@ -45,16 +45,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * @var Collection<int, CommentResponse>
+     * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: CommentResponse::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commentResponses;
-
-    /**
-     * @var Collection<int, CommentMain>
-     */
-    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commentMains;
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $comments;
 
     /**
      * @var Collection<int, Trick>
@@ -74,8 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->commentResponses = new ArrayCollection();
-        $this->commentMains = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->tricks = new ArrayCollection();
     }
 
@@ -190,59 +183,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CommentResponse>
+     * @return Collection<int, Comment>
      */
-    public function getCommentResponses(): Collection
+    public function getComments(): Collection
     {
-        return $this->commentResponses;
+        return $this->comments;
     }
 
-    public function addCommentResponse(CommentResponse $commentResponse): static
+    public function addComment(Comment $comment): static
     {
-        if (!$this->commentResponses->contains($commentResponse)) {
-            $this->commentResponses->add($commentResponse);
-            $commentResponse->setUser($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeCommentResponse(CommentResponse $commentResponse): static
+    public function removeComment(Comment $comment): static
     {
-        if ($this->commentResponses->removeElement($commentResponse)) {
+        if ($this->comments->removeElement($comment)) {
             // set the owning side to null (unless already changed)
-            if ($commentResponse->getUser() === $this) {
-                $commentResponse->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CommentMain>
-     */
-    public function getCommentMains(): Collection
-    {
-        return $this->commentMains;
-    }
-
-    public function addCommentMain(CommentMain $commentMain): static
-    {
-        if (!$this->commentMains->contains($commentMain)) {
-            $this->commentMains->add($commentMain);
-            $commentMain->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentMain(CommentMain $commentMain): static
-    {
-        if ($this->commentMains->removeElement($commentMain)) {
-            // set the owning side to null (unless already changed)
-            if ($commentMain->getUser() === $this) {
-                $commentMain->setUser(null);
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
             }
         }
 

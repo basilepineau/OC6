@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Comment;
+use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityRepository;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 use Zenstruck\Foundry\Persistence\Proxy;
@@ -34,8 +35,10 @@ final class CommentFactory extends PersistentProxyObjectFactory{
     protected function defaults(): array|callable
     {
         return [
+            'user' => UserFactory::new(),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'text' => self::faker()->text(5000),
+            'text' => self::faker()->sentence(mt_rand(10, 50)),
+            'trick' => TrickFactory::new(),
         ];
     }
 

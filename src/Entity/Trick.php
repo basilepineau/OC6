@@ -50,10 +50,10 @@ class Trick
     private Collection $videos;
 
     /**
-     * @var Collection<int, CommentMain>
+     * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'trick', orphanRemoval: true)]
-    private Collection $commentMains;
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'trick', orphanRemoval: true)]
+    private Collection $comments;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -67,7 +67,7 @@ class Trick
     {
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
-        $this->commentMains = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,29 +196,29 @@ class Trick
     }
 
     /**
-     * @return Collection<int, CommentMain>
+     * @return Collection<int, Comment>
      */
-    public function getCommentMains(): Collection
+    public function getComments(): Collection
     {
-        return $this->commentMains;
+        return $this->comments;
     }
 
-    public function addCommentMain(CommentMain $commentMain): static
+    public function addComment(Comment $comment): static
     {
-        if (!$this->commentMains->contains($commentMain)) {
-            $this->commentMains->add($commentMain);
-            $commentMain->setTrick($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setTrick($this);
         }
 
         return $this;
     }
 
-    public function removeCommentMain(CommentMain $commentMain): static
+    public function removeComment(Comment $comment): static
     {
-        if ($this->commentMains->removeElement($commentMain)) {
+        if ($this->comments->removeElement($comment)) {
             // set the owning side to null (unless already changed)
-            if ($commentMain->getTrick() === $this) {
-                $commentMain->setTrick(null);
+            if ($comment->getTrick() === $this) {
+                $comment->setTrick(null);
             }
         }
 

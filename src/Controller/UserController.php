@@ -37,12 +37,12 @@ class UserController extends AbstractController
     public function index(UserInterface $user): Response
     {
         $tricks = $user->getTricks();
-        $commentMains = $user->getCommentMains();
+        $comments = $user->getComments();
 
         return $this->render('user/index.html.twig', [
             'user' => $user,
             'tricks' => $tricks,
-            'commentMains' => $commentMains
+            'comments' => $comments
         ]);
     }
 
