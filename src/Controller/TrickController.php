@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -51,7 +52,8 @@ class TrickController extends AbstractController
     }
 
     #[Route('/trick/new', name: 'app_trick_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, PictureService $pictureService): Response
+    #[IsGranted('ROLE_USER')]
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, PictureService $pictureService, UserInterface $user): Response
     {
         $trick = new Trick();
         $trick->setCreatedAt(new \DateTimeImmutable()); 
@@ -204,8 +206,6 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_user_profile'); // Remplacez par le nom de votre route de profil
         }
     
-        return $this->redirectToRoute('app_homepage');
-
         return $this->redirectToRoute('app_homepage');
     }
 
