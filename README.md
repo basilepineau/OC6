@@ -5,15 +5,15 @@ This project is part of the OpenClassrooms curriculum and involves building a co
 
 ## Features
 
-The SnowTricks website consists of two main parts:
+The SnowTricks website consists of two main parts :
 
-1. **Pages Accessible to All Visitors:**
+1. **Pages Accessible to All Visitors :**
 
    - A home page displaying a list of snowboard tricks. Users can view each trick's details, including the name, description, and associated media (photos and videos).
    - Trick detail pages where users can see the description, images, and videos, as well as participate in discussions.
    - Paginated trick listings to improve user experience and performance.
 
-2. **Pages Accessible to Authenticated Users:**
+2. **Pages Accessible to Authenticated Users :**
 
    - Authenticated users can create, modify, and delete tricks.
    - Each trick includes a name, description, media (photos/videos), and an optional discussion section where users can post messages.
@@ -21,7 +21,7 @@ The SnowTricks website consists of two main parts:
 
 ## Technologies Used
 
-This project uses the following technologies:
+This project uses the following technologies :
 
 - **Backend**: PHP and Symfony framework.
 - **Frontend**: Twig for templating, CSS, and JavaScript.
@@ -31,20 +31,20 @@ This project uses the following technologies:
 
 ## Installation
 
-1. Clone the repository from GitHub:
+1. Clone the repository from GitHub :
 
    ```bash
    git clone https://github.com/basilepineau/oc6.git
    cd oc6
    ```
 
-2. Install dependencies using Composer:
+2. Install dependencies using Composer :
 
    ```bash
    composer install
    ```
 
-3. Configure the environment variables:
+3. Configure the environment variables :
 
    Copy the `.env` file and set up database and mailer settings:
 
@@ -52,26 +52,33 @@ This project uses the following technologies:
    cp .env .env.local
    ```
 
-4. Run the database migrations:
+4. Create the database with the following command :
 
    ```bash
-   php bin/console doctrine:migrations:migrate
+   php bin/console doctrine:database:create
+   ```
+   
+5. Create the tables and schema :
+
+   ```bash
+   php bin/console doctrine:schema:update --force
    ```
 
-5. Load initial data fixtures:
+
+6. Load initial data fixtures:
 
    ```bash
    php bin/console doctrine:fixtures:load
    ```
 
-6. Install frontend assets:
+7. Install frontend assets:
 
    ```bash
    npm install
    npm run dev
    ```
 
-7. Start the local development server:
+8. Start the local development server:
 
    ```bash
    symfony server:start
