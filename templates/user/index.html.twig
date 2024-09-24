@@ -128,11 +128,11 @@
                 <div class="container px-1 px-lg-1 my-2">
                     <div id="card-container" class="row col-11 col-lg-12">
                         {% if tricks is empty %}
-                            <div class="col-11 d-flex flex-column justify-content-center gap-3">
+                            <div class="col-11 d-flex flex-column justify-content-center gap-4">
                                 <div class="text-center text-light">
                                     You haven't created a trick yet.
                                 </div>
-                                <a href="/trick/new" class="btn btn-primary-dark text-light">Create my first trick</a>
+                                <a href="/trick/new" class="btn btn-primary-dark text-light m-auto col-8 col-lg-6">Create my first trick</a>
                             </div>
                         {% else %}
                             {% for trick in tricks %}
