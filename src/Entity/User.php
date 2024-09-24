@@ -39,22 +39,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $avatar = 'avatar.png';
+    private ?string $avatar = 'default-avatar.png';
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
-
-    /**
-     * @var Collection<int, CommentResponse>
-     */
-    #[ORM\OneToMany(targetEntity: CommentResponse::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commentResponses;
-
-    /**
-     * @var Collection<int, CommentMain>
-     */
-    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commentMains;
 
     /**
      * @var Collection<int, Trick>
@@ -71,12 +59,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->commentResponses = new ArrayCollection();
-        $this->commentMains = new ArrayCollection();
         $this->tricks = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,66 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CommentResponse>
-     */
-    public function getCommentResponses(): Collection
-    {
-        return $this->commentResponses;
-    }
-
-    public function addCommentResponse(CommentResponse $commentResponse): static
-    {
-        if (!$this->commentResponses->contains($commentResponse)) {
-            $this->commentResponses->add($commentResponse);
-            $commentResponse->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentResponse(CommentResponse $commentResponse): static
-    {
-        if ($this->commentResponses->removeElement($commentResponse)) {
-            // set the owning side to null (unless already changed)
-            if ($commentResponse->getUser() === $this) {
-                $commentResponse->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CommentMain>
-     */
-    public function getCommentMains(): Collection
-    {
-        return $this->commentMains;
-    }
-
-    public function addCommentMain(CommentMain $commentMain): static
-    {
-        if (!$this->commentMains->contains($commentMain)) {
-            $this->commentMains->add($commentMain);
-            $commentMain->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentMain(CommentMain $commentMain): static
-    {
-        if ($this->commentMains->removeElement($commentMain)) {
-            // set the owning side to null (unless already changed)
-            if ($commentMain->getUser() === $this) {
-                $commentMain->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Trick>
      */
     public function getTricks(): Collection
@@ -311,6 +244,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
 
         return $this;
     }

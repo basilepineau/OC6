@@ -38,8 +38,9 @@ final class UserFactory extends PersistentProxyObjectFactory{
             'email' => self::faker()->email(),
             'username' => self::faker()->userName(),
             'roles' => ['ROLE_USER'],
-            'avatar' => self::faker()->imageUrl(200, 200, 'people'),
-            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'createdAt' => \DateTimeImmutable::createFromMutable(
+                self::faker()->dateTimeBetween('2020-01-01', 'now')
+            ),
             'password' => self::faker()->sha256,
         ];
     }

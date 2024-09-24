@@ -3,11 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\CommentMain;
+use App\Entity\Comment;
 use App\Entity\Picture;
 use App\Entity\Trick;
 use App\Entity\Video;
-use App\Form\CommentMainType;
+use App\Form\CommentType;
 use App\Form\TrickType;
 use App\Security\Voter\TrickVoter;
 use App\Service\PictureService;
@@ -111,18 +111,18 @@ class TrickController extends AbstractController
             throw $this->createNotFoundException('The trick does not exist.');
         }
 
-        $commentMain = new CommentMain();
-        $commentMain->setCreatedAt(new \DateTimeImmutable());
+        $comment = new Comment();
+        $comment->setCreatedAt(new \DateTimeImmutable());
 
-        $form = $this->createForm(CommentMainType::class, $commentMain);
+        $form = $this->createForm(CommentType::class, $comment);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $commentMain->setTrick($trick);
-            $commentMain->setUser($this->getUser());
+            $comment->setTrick($trick);
+            $comment->setUser($this->getUser());
 
-            $this->entityManager->persist($commentMain);
+            $this->entityManager->persist($comment);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Your comment has been posted !');
@@ -130,11 +130,11 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_trick_show', ['slug' => $slug]);
         }
 
-        $commentMains = $this->entityManager->getRepository(CommentMain::class)->findByTrickOrderedByDate($trick->getId());
+        $comments = $this->entityManager->getRepository(Comment::class)->findByTrickOrderedByDate($trick->getId());
         
         $user = $this->getUser();
 
-        return $this->render('trick/show.html.twig', ['trick' => $trick, 'commentMains' => $commentMains, 'user' => $user, 'form' => $form->createView()]);
+        return $this->render('trick/show.html.twig', ['trick' => $trick, 'comments' => $comments, 'user' => $user, 'form' => $form->createView()]);
     }
 
     #[Route('/trick/{slug}/edit', name: 'app_trick_edit')]
@@ -209,8 +209,8 @@ class TrickController extends AbstractController
         return $this->redirectToRoute('app_homepage');
     }
 
-    #[Route('/trick/{slug}/edit-comment-main/{id}', name: 'app_trick_edit_comment_main', methods: ['POST'])]
-    public function editCommentMain(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
+    #[Route('/trick/{slug}/edit-comment/{id}', name: 'app_trick_edit_comment_main', methods: ['POST'])]
+    public function editComment(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
@@ -219,7 +219,7 @@ class TrickController extends AbstractController
 
         $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
 
-        $comment = $this->entityManager->getRepository(CommentMain::class)->find($id);
+        $comment = $this->entityManager->getRepository(Comment::class)->find($id);
         if (!$comment || $comment->getTrick() !== $trick) {
             return new JsonResponse(['error' => 'The comment does not exist or does not belong to this trick.'], Response::HTTP_NOT_FOUND);
         }
@@ -237,8 +237,8 @@ class TrickController extends AbstractController
         return new JsonResponse(['error' => 'Invalid data provided.'], Response::HTTP_BAD_REQUEST);
     }
 
-    #[Route('/trick/{slug}/delete-comment-main/{id}', name: 'app_trick_delete_comment_main', methods: ['POST', 'DELETE'])]
-    public function deleteCommentMain(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
+    #[Route('/trick/{slug}/delete-comment/{id}', name: 'app_trick_delete_comment_main', methods: ['POST', 'DELETE'])]
+    public function deleteComment(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
     {
         $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
         if (!$trick) {
@@ -247,12 +247,12 @@ class TrickController extends AbstractController
 
         $this->denyAccessUnlessGranted(TrickVoter::EDIT, $trick);
     
-        $comment = $this->entityManager->getRepository(CommentMain::class)->find($id);
+        $comment = $this->entityManager->getRepository(Comment::class)->find($id);
         if (!$comment || $comment->getTrick() !== $trick) {
             return new JsonResponse(['error' => 'The comment does not exist or does not belong to this trick.'], Response::HTTP_NOT_FOUND);
         }
     
-        if ($this->isCsrfTokenValid('delete-comment-main' . $comment->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete-comment' . $comment->getId(), $request->request->get('_token'))) {
     
             // Supprimer l'entité Picture
             $this->entityManager->remove($comment);

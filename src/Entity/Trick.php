@@ -49,12 +49,6 @@ class Trick
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'trick', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
-    /**
-     * @var Collection<int, CommentMain>
-     */
-    #[ORM\OneToMany(targetEntity: CommentMain::class, mappedBy: 'trick', orphanRemoval: true)]
-    private Collection $commentMains;
-
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -63,11 +57,17 @@ class Trick
     #[Slug(fields: ['name'])]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'trick', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
-        $this->commentMains = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -195,36 +195,6 @@ class Trick
         return $this;
     }
 
-    /**
-     * @return Collection<int, CommentMain>
-     */
-    public function getCommentMains(): Collection
-    {
-        return $this->commentMains;
-    }
-
-    public function addCommentMain(CommentMain $commentMain): static
-    {
-        if (!$this->commentMains->contains($commentMain)) {
-            $this->commentMains->add($commentMain);
-            $commentMain->setTrick($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentMain(CommentMain $commentMain): static
-    {
-        if ($this->commentMains->removeElement($commentMain)) {
-            // set the owning side to null (unless already changed)
-            if ($commentMain->getTrick() === $this) {
-                $commentMain->setTrick(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -245,6 +215,36 @@ class Trick
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getTrick() === $this) {
+                $comment->setTrick(null);
+            }
+        }
 
         return $this;
     }
