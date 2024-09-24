@@ -49,12 +49,6 @@ class Trick
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'trick', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
-    /**
-     * @var Collection<int, Comment>
-     */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'trick', orphanRemoval: true)]
-    private Collection $comments;
-
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -62,6 +56,12 @@ class Trick
     #[ORM\Column(length: 255, unique: true)]
     #[Slug(fields: ['name'])]
     private ?string $slug = null;
+
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'trick', orphanRemoval: true)]
+    private Collection $comments;
 
     public function __construct()
     {
@@ -195,6 +195,30 @@ class Trick
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Comment>
      */
@@ -221,30 +245,6 @@ class Trick
                 $comment->setTrick(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
 
         return $this;
     }
