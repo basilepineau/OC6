@@ -36,7 +36,7 @@ final class VideoFactory extends PersistentProxyObjectFactory{
     {
         return [
             'trick' => TrickFactory::new(),
-            'url' => self::faker()->imageUrl(),
+            'url' => 'SQyTWk7OxSI'
         ];
     }
 

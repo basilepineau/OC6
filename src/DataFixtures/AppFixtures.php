@@ -2,8 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\CommentMainFactory;
-use App\Factory\CommentResponseFactory;
+use App\Factory\CommentFactory;
 use App\Factory\PictureFactory;
 use App\Factory\TrickFactory;
 use App\Factory\UserFactory;
@@ -28,13 +27,10 @@ class AppFixtures extends Fixture
         foreach ($tricks as $trick) {
             PictureFactory::createMany(mt_rand(1, 5), ['trick' => $trick]);
             VideoFactory::createMany(mt_rand(1, 5), ['trick' => $trick]);
-            $commentMains = CommentMainFactory::createMany(mt_rand(0, 10), ['trick' => $trick]);
-            foreach ($commentMains as $commentMain) {
-                CommentResponseFactory::createMany(mt_rand(0, 4), ['commentMain' => $commentMain]);
-            }
+            CommentFactory::createMany(mt_rand(0, 10), ['trick' => $trick]);
        };
 
-
+       
         $manager->flush();
     }
 }
