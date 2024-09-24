@@ -65,20 +65,21 @@ This project uses the following technologies :
    ```
 
 
-6. Load initial data fixtures:
+6. Load initial data fixtures :
 
    ```bash
    php bin/console doctrine:fixtures:load
    ```
 
-7. Install frontend assets:
+7. Install frontend assets :
 
    ```bash
    npm install
-   npm run dev
    ```
 
-8. Start the local development server:
+8. Move the bootstrap.bundle.min.js file from /node_modules/bootstrap/dist/js to /public/assets/js.
+
+9. Start the local development server :
 
    ```bash
    symfony server:start
