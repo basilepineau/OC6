@@ -90,6 +90,7 @@ This project uses the following technologies :
 - Once the installation is complete, access the application at `http://localhost:8000`.
 - Visitors can browse tricks and view their details.
 - Authenticated users can add, edit, and delete tricks and participate in discussions.
+- You can create your own account to have access to all the features.
 
 ## Security
 
