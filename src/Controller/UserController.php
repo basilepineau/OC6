@@ -68,7 +68,7 @@ class UserController extends AbstractController
         $oldAvatarPath = $params->get('avatar_directory') . '/' . $oldAvatarName;
         $fileInfo = new \SplFileInfo($oldAvatarPath);
 
-        if (!$fileInfo->isFile()) {
+        if ($fileInfo->isFile()) {
             unlink($oldAvatarPath);
         }
 

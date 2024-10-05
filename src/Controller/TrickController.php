@@ -358,7 +358,7 @@ class TrickController extends AbstractController
 
             $fileInfo = new \SplFileInfo($oldPicturePath);
 
-            if (!$fileInfo->isFile()) {
+            if ($fileInfo->isFile()) {
                 unlink($oldPicturePath);
             }
 
@@ -408,7 +408,7 @@ class TrickController extends AbstractController
 
             $fileInfo = new \SplFileInfo($entirePath);
 
-            if (!$fileInfo->isFile()) {
+            if ($fileInfo->isFile()) {
                 if (!unlink($entirePath)) {
                     return new JsonResponse(['error' => 'Failed to delete the file from the server.'], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
