@@ -58,7 +58,9 @@ class UserController extends AbstractController
         // Delete the old avatar from the server
         $oldAvatarName = $user->getAvatar();
         $oldAvatarPath = $params->get('avatar_directory') . '/' . $oldAvatarName;
-        if (file_exists($oldAvatarPath)) {
+        $fileInfo = new \SplFileInfo($oldAvatarPath);
+
+        if (!$fileInfo->isFile()) {
             unlink($oldAvatarPath);
         }
 

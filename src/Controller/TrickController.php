@@ -185,9 +185,13 @@ class TrickController extends AbstractController
                 $url = $trickPicture->getUrl();
                 $uploadDirectory = $params->get('upload_directory');
                 $entirePath = $uploadDirectory.'/'.$url;
-                if (!file_exists($entirePath)){
+
+                $fileInfo = new \SplFileInfo($entirePath);
+
+                if (!$fileInfo->isFile()) {
                     throw new \Exception('File not found: ' . $entirePath);
                 }
+                
                 if (!unlink($entirePath)) {
                     throw new \Exception('Failed to delete file: ' . $entirePath);
                 }
@@ -318,7 +322,10 @@ class TrickController extends AbstractController
             // Delete the old picture from the server
             $uploadDirectory = $params->get('upload_directory');
             $oldPicturePath = $uploadDirectory . '/' . $picture->getUrl();
-            if (file_exists($oldPicturePath)) {
+
+            $fileInfo = new \SplFileInfo($oldPicturePath);
+
+            if (!$fileInfo->isFile()) {
                 unlink($oldPicturePath);
             }
 
@@ -361,8 +368,10 @@ class TrickController extends AbstractController
             $url = $picture->getUrl();
             $uploadDirectory = $params->get('upload_directory');
             $entirePath = $uploadDirectory . '/' . $url;
-    
-            if (file_exists($entirePath)) {
+
+            $fileInfo = new \SplFileInfo($entirePath);
+
+            if (!$fileInfo->isFile()) {
                 if (!unlink($entirePath)) {
                     return new JsonResponse(['error' => 'Failed to delete the file from the server.'], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
