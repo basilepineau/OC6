@@ -20,7 +20,7 @@
             <div class="overlay-text display-1 position-absolute m-2 right-1 text-light">{{ trick.name }}</div>
             {% if trick.user == user %}
                 <div class="position-absolute top-0 end-0 m-2 p-3 rounded border border-white">
-                    <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}" class="text-primary"><i class="bi bi-lg bi-pencil mx-2"></i></a>
+                    <a href="{{ path('app_trick_edit', { 'slug': trick.slug }) }}" class="text-light"><i class="bi bi-lg bi-pencil mx-2"></i></a>
                     <a class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#deleteTrickModal"><i class="bi bi-lg bi-trash text-danger"></i></a>
                 </div>
             {% endif %}
