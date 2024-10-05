@@ -55,7 +55,10 @@ final class PictureFactory extends PersistentProxyObjectFactory{
                 $newFilePath = __DIR__ . '/../../public/assets/uploads'. '/' . $picture->getUrl(); 
 
                 // Copier l'image sample vers un fichier avec un nom unique
-                if (!file_exists($this->uploadDirectory)) {
+
+                $fileInfo = new \SplFileInfo($this->uploadDirectory);
+
+                if (!$fileInfo->isFile()) {
                     mkdir($this->uploadDirectory, 0755, true);
                 }
 
