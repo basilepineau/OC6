@@ -16,7 +16,7 @@
         {% endfor %}
         <div class="banner d-flex justify-content-center align-items-center position-relative">
             <img class="card-img-top img-fluid rounded w-100" 
-                src="{{ trick.pictures|length > 0 ? asset('assets/uploads/' ~ trick.pictures.first.url) : asset('assets/uploads/cropped-default-placeholder.png') }}">
+                src="{{ trick.pictures|length > 0 ? asset('assets/uploads/' ~ trick.pictures.first.url) : asset('assets/uploads/default-picture.png') }}">
             <div class="overlay-text display-1 position-absolute m-2 right-1 text-light">{{ trick.name }}</div>
             {% if trick.user == user %}
                 <div class="position-absolute top-0 end-0 m-2 p-3 rounded border border-white">
