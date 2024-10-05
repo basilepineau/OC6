@@ -16,6 +16,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    /**
+     * Gère la connexion des utilisateurs.
+     * Cette méthode affiche le formulaire de connexion et traite les erreurs d'authentification éventuelles.
+     */
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -31,6 +35,10 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la procédure de récupération de mot de passe oublié.
+     * Cette méthode permet à un utilisateur de demander un lien pour réinitialiser son mot de passe.
+     */
     #[Route(path:'/forgot-password', name:'app_forgot_password')]
     public function forgotPassword(Request $request, UserRepository $userRepository, ResetPasswordService $resetPasswordService): Response
     {
@@ -54,6 +62,10 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la réinitialisation du mot de passe via un lien contenant un jeton.
+     * Cette méthode permet à l'utilisateur de définir un nouveau mot de passe après validation du jeton.
+     */
     #[Route(path: '/reset-password/{token}', name: 'app_reset_password')]
     public function resetPassword(Request $request, UserRepository $userRepository, string $token, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
     {
@@ -89,6 +101,10 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la déconnexion de l'utilisateur.
+     * Cette méthode est interceptée par le firewall de sécurité de Symfony et ne doit pas contenir de logique.
+     */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {

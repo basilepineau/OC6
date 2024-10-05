@@ -17,6 +17,9 @@ class HomeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Affiche la page d'accueil de l'application.
+     */
     #[Route('/', name: 'app_homepage')]
     public function index(): Response
     {

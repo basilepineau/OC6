@@ -38,6 +38,10 @@ class TrickController extends AbstractController
         $this->pictureService = $pictureService;
     }
 
+    /**
+     * Affiche la liste des tricks disponibles sur le site.
+     * Cette méthode récupère et renvoie une vue contenant tous les tricks.
+     */
     #[Route('/tricks', name: 'app_tricks')]
     public function index(): Response
     {
@@ -51,6 +55,11 @@ class TrickController extends AbstractController
         ]);
     }
 
+    /**
+     * Crée un nouveau trick. Cette route est accessible uniquement aux utilisateurs authentifiés.
+     * Le trick est créé à partir des données envoyées dans la requête, les images sont gérées via le service PictureService,
+     * et le slug est généré via le SluggerInterface.
+     */
     #[Route('/trick/new', name: 'app_trick_new')]
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, PictureService $pictureService, UserInterface $user): Response
@@ -102,6 +111,9 @@ class TrickController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche les détails d'un trick spécifié par son slug.
+     */
     #[Route('/trick/{slug}', name: 'app_trick_show')]
     public function show(string $slug, Request $request): Response
     {
@@ -137,6 +149,9 @@ class TrickController extends AbstractController
         return $this->render('trick/show.html.twig', ['trick' => $trick, 'comments' => $comments, 'user' => $user, 'form' => $form->createView()]);
     }
 
+    /**
+     * Modifie un trick existant. La modification est effectuée sur le trick correspondant au slug fourni.
+     */
     #[Route('/trick/{slug}/edit', name: 'app_trick_edit')]
     public function edit(string $slug, Request $request): Response
     {
@@ -168,6 +183,9 @@ class TrickController extends AbstractController
         return $this->render('trick/edit.html.twig', ['form' => $form->createView(), 'trick' => $trick, 'categories' => $categories]);
     }
 
+    /**
+     * Supprime un trick existant. Le trick à supprimer est identifié par son slug.
+     */
     #[Route('/trick/{slug}/delete', name: 'app_trick_delete')]
     public function delete(string $slug, Request $request, ParameterBagInterface $params): Response
     {
@@ -213,6 +231,10 @@ class TrickController extends AbstractController
         return $this->redirectToRoute('app_homepage');
     }
 
+    /**
+     * Modifie un commentaire associé à un trick. Le commentaire est identifié par son ID et le trick par son slug.
+     * La méthode s'assure également de la validité du token CSRF pour la modification.
+     */
     #[Route('/trick/{slug}/edit-comment/{id}', name: 'app_trick_edit_comment_main', methods: ['POST'])]
     public function editComment(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
@@ -241,6 +263,10 @@ class TrickController extends AbstractController
         return new JsonResponse(['error' => 'Invalid data provided.'], Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     * Supprime un commentaire associé à un trick. Le commentaire est identifié par son ID et le trick par son slug.
+     * La suppression peut être réalisée via POST ou DELETE.
+     */
     #[Route('/trick/{slug}/delete-comment/{id}', name: 'app_trick_delete_comment_main', methods: ['POST', 'DELETE'])]
     public function deleteComment(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
     {
@@ -268,6 +294,9 @@ class TrickController extends AbstractController
         }
     }
 
+    /**
+     * Ajoute une nouvelle image à un trick. La méthode gère la validation du token CSRF et le traitement de l'image.
+     */
     #[Route('/trick/{slug}/add-picture', name: 'app_trick_add_picture', methods: ['POST'])]
     public function addPicture(string $slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
@@ -303,6 +332,10 @@ class TrickController extends AbstractController
         ], Response::HTTP_OK);
     }
 
+    /**
+     * Modifie une image existante associée à un trick. L'image est identifiée par son ID et le trick par son slug.
+     * La validation du token CSRF est également vérifiée.
+     */
     #[Route('/trick/{slug}/edit-picture/{id}', name: 'app_trick_edit_picture', methods: ['POST'])]
     public function editPicture(string $slug, $id, Request $request, ParameterBagInterface $params, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
@@ -348,6 +381,10 @@ class TrickController extends AbstractController
         return new JsonResponse(['error' => 'Invalid data provided.'], Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     * Supprime une image associée à un trick. L'image est identifiée par son ID et le trick par son slug.
+     * La suppression peut être réalisée via POST ou DELETE.
+     */
     #[Route('/trick/{slug}/delete-picture/{id}', name: 'app_trick_delete_picture', methods: ['POST', 'DELETE'])]
     public function deletePicture(string $slug, $id, Request $request, ParameterBagInterface $params): JsonResponse
     {
@@ -389,6 +426,9 @@ class TrickController extends AbstractController
         }
     }
 
+    /**
+     * Ajoute une nouvelle vidéo à un trick. La méthode gère la validation du token CSRF avant d'ajouter la vidéo.
+     */
     #[Route('/trick/{slug}/add-video', name: 'app_trick_add_video', methods: ['POST'])]
     public function addVideo(string $slug, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
@@ -434,6 +474,10 @@ class TrickController extends AbstractController
         ], Response::HTTP_OK);
     }
 
+    /**
+     * Modifie une vidéo associée à un trick. La vidéo est identifiée par son ID et le trick par son slug.
+     * La méthode vérifie également la validité du token CSRF avant de procéder à la modification.
+     */
     #[Route('/trick/{slug}/edit-video/{id}', name: 'app_trick_edit_video', methods: ['POST'])]
     public function editVideo(string $slug, $id, Request $request, CsrfTokenManagerInterface $csrfTokenManager): JsonResponse
     {
@@ -474,7 +518,10 @@ class TrickController extends AbstractController
         return new JsonResponse(['error' => 'Invalid data provided.'], Response::HTTP_BAD_REQUEST);
     }
     
-
+    /**
+     * Supprime une vidéo associée à un trick. La vidéo est identifiée par son ID et le trick par son slug.
+     * La suppression peut être réalisée via POST ou DELETE.
+     */
     #[Route('/trick/{slug}/delete-video/{id}', name: 'app_trick_delete_video', methods: ['POST', 'DELETE'])]
     public function deleteVideo(string $slug, $id, Request $request): JsonResponse
     {
@@ -501,6 +548,9 @@ class TrickController extends AbstractController
         }
     }
     
+    /**
+     * Récupère tous les médias (images et vidéos) associés à un trick spécifique.
+     */
     #[Route('/trick/{slug}/get-media', name: 'app_trick_get_media', methods: ['GET'])]
     public function getMedia(string $slug, TrickMediaService $trickMediaService): JsonResponse
     {
