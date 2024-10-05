@@ -20,7 +20,7 @@
     <h1 class="text-light">Edit mode</h1>
     <div class="banner d-flex justify-content-center align-items-center position-relative mt-5">
         <img class="card-img-top img-fluid rounded w-100 border border-light" 
-            src="{{ trick.pictures|length > 0 ? asset('assets/uploads/' ~ trick.pictures.first.url) : asset('assets/uploads/cropped-default-placeholder.png') }}" 
+            src="{{ trick.pictures|length > 0 ? asset('assets/uploads/' ~ trick.pictures.first.url) : asset('assets/uploads/default-picture.png') }}" 
             data-id="{{ trick.pictures|length > 0 ? trick.pictures.first.id : '' }}">
         <div class="position-absolute top-0 end-0 p-3 rounded m-2 bg-primary-dark d-flex gap-2 shadow">
             <div class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#addPicture">

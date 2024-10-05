@@ -28,6 +28,11 @@ class RegistrationController extends AbstractController
         $this->userVerificationService = $userVerificationService;
     }
 
+    /**
+     * Gère l'inscription des nouveaux utilisateurs.
+     * Cette méthode permet de traiter le formulaire d'inscription, de hasher le mot de passe de l'utilisateur
+     * et d'enregistrer les informations dans la base de données.
+     */
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
@@ -67,6 +72,10 @@ class RegistrationController extends AbstractController
         ]);
     }
 
+    /**
+     * Vérifie l'email de l'utilisateur après l'inscription via un lien de confirmation.
+     * Cette méthode traite la vérification du jeton envoyé par email pour confirmer l'adresse électronique de l'utilisateur.
+     */
     #[Route('/register/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request): Response
     {

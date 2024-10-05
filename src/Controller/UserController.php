@@ -33,6 +33,10 @@ class UserController extends AbstractController
         $this->userVerificationService = $userVerificationService;
     }
 
+    /**
+     * Affiche le profil de l'utilisateur connecté.
+     * Cette méthode permet de récupérer et d'afficher les informations du profil utilisateur.
+     */
     #[Route('/profile', name: 'app_user_profile')]
     public function index(UserInterface $user): Response
     {
@@ -46,6 +50,10 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la modification de l'avatar de l'utilisateur.
+     * Cette méthode permet de traiter la requête de changement d'avatar pour l'utilisateur connecté.
+     */
     #[Route('/user/avatar/edit', name: 'app_user_avatar_edit')]
     public function editAvatar(UserInterface $user, Request $request, ParameterBagInterface $params): Response
     {
@@ -75,6 +83,10 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_profile'); 
     }
 
+    /**
+     * Gère la modification du nom d'utilisateur.
+     * Cette méthode permet à l'utilisateur de modifier son nom d'utilisateur.
+     */
     #[Route('/user/username/edit', name: 'app_user_username_edit')]
     public function editUsername(UserInterface $user, Request $request): Response
     {
@@ -102,6 +114,10 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user_profile');
     }
 
+    /**
+     * Gère la modification du mot de passe de l'utilisateur.
+     * Cette méthode permet à l'utilisateur de changer son mot de passe après vérification de l'ancien mot de passe.
+     */
     #[Route('/user/password/edit', name: 'app_user_password_edit')]
     public function editPassword(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserInterface $user): Response
     {
@@ -136,6 +152,10 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la modification de l'email de l'utilisateur.
+     * Cette méthode permet à l'utilisateur de changer son adresse email, avec une vérification éventuelle de l'adresse déjà existante.
+     */
     #[Route('/user/email/edit', name: 'app_user_email_edit')]
     public function editEmail(Request $request, UserRepository $userRepository, UserInterface $user): Response
     {
@@ -174,6 +194,10 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Vérifie la nouvelle adresse email après une modification.
+     * Cette méthode traite le lien de confirmation envoyé par email pour vérifier la nouvelle adresse de l'utilisateur.
+     */
     #[Route('/user/verify/email', name: 'app_verify_user_email')]
     public function verifyUserEmail(Request $request): Response
     {

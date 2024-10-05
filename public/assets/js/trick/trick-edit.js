@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let imgSrc =
       trick.pictures.length > 0
         ? `/assets/uploads/${trick.pictures[0].url}`
-        : "/assets/uploads/cropped-default-placeholder.png";
+        : "/assets/uploads/default-picture.png";
 
     const bannerHTML = `
       <img class="card-img-top img-fluid rounded w-100 border border-light" 
